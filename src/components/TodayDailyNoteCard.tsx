@@ -65,7 +65,15 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
     try {
       const parts = dateStr.split('-');
       const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-      const daysOfWeek = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+      const daysOfWeek = [
+        'Chủ Nhật',
+        'Thứ Hai',
+        'Thứ Ba',
+        'Thứ Tư',
+        'Thứ Năm',
+        'Thứ Sáu',
+        'Thứ Bảy',
+      ];
       const dayName = daysOfWeek[d.getDay()];
       return `${dayName}, ${parts[2]}/${parts[1]}/${parts[0]}`;
     } catch {
@@ -129,9 +137,7 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-slate-800 text-base">
-                Ghi Chú Cảm Xúc Mỗi Ngày
-              </h3>
+              <h3 className="font-bold text-slate-800 text-base">Ghi Chú Cảm Xúc Mỗi Ngày</h3>
               {isToday && (
                 <span className="text-[10px] font-extrabold uppercase bg-rose-500 text-white px-2 py-0.5 rounded-full shadow-2xs animate-pulse">
                   Hôm nay
@@ -193,7 +199,9 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex flex-wrap items-center gap-2">
               {/* Mood badge */}
-              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${moodInfo.badgeClass}`}>
+              <span
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${moodInfo.badgeClass}`}
+              >
                 <span>{moodInfo.icon}</span>
                 <span>{moodInfo.label}</span>
               </span>
@@ -281,7 +289,8 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
               Chưa có ghi chú nào cho ngày {formatDateVietnamese(selectedDate)}
             </h4>
             <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
-              Hãy lưu lại một dòng cảm xúc, cuộc gọi, buổi thăm nuôi, hoặc sự kiện đáng nhớ hôm nay để gom thành nhật ký tình yêu quân ngũ nhé!
+              Hãy lưu lại một dòng cảm xúc, cuộc gọi, buổi thăm nuôi, hoặc sự kiện đáng nhớ hôm nay
+              để gom thành nhật ký tình yêu quân ngũ nhé!
             </p>
           </div>
           <button
@@ -298,7 +307,10 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
       <div className="mt-3.5 pt-2.5 border-t border-rose-100 flex items-center justify-between text-xs text-slate-500">
         <div className="flex items-center gap-1.5">
           <BookOpen className="w-3.5 h-3.5 text-rose-500" />
-          <span>Tổng cộng: <strong className="text-rose-600">{notes.length}</strong> ngày đã ghi lại cảm xúc</span>
+          <span>
+            Tổng cộng: <strong className="text-rose-600">{notes.length}</strong> ngày đã ghi lại cảm
+            xúc
+          </span>
         </div>
         <button
           onClick={onViewAllNotes}

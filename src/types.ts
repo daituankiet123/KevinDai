@@ -6,9 +6,9 @@ export interface CoupleData {
   boyfriendAvatar: string;
   girlfriendAvatar: string;
   militaryStartDate: string; // YYYY-MM-DD (e.g. 2026-04-04)
-  militaryEndDate: string;   // YYYY-MM-DD (e.g. 2028-04-04)
-  datingStartDate: string;   // YYYY-MM-DD (e.g. 2024-08-29)
-  militaryUnit: string;      // e.g. "Trường Cao đẳng Hậu cần 2 (Thủ Đức) - Y tá Đại đội"
+  militaryEndDate: string; // YYYY-MM-DD (e.g. 2028-04-04)
+  datingStartDate: string; // YYYY-MM-DD (e.g. 2024-08-29)
+  militaryUnit: string; // e.g. "Trường Cao đẳng Hậu cần 2 (Thủ Đức) - Y tá Đại đội"
   sweetQuote: string;
   soundEnabled: boolean;
   rainHeartsEnabled: boolean;
@@ -83,4 +83,3 @@ export interface DailyNote {
   createdAt: string;
   updatedAt?: string;
 }
-

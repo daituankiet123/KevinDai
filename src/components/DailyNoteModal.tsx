@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { DailyNote, DailyNoteMood, DailyNoteAuthor } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
 import { todayStr } from '../utils/dateUtils';
+import { newId } from '../utils/id';
 import { SUGGESTED_NOTE_TAGS } from '../constants';
 
 interface DailyNoteModalProps {
@@ -17,15 +18,58 @@ interface DailyNoteModalProps {
   girlfriendName?: string;
 }
 
-const MOOD_OPTIONS: { id: DailyNoteMood; label: string; icon: string; bg: string; text: string }[] = [
-  { id: 'love', label: 'Yêu thương', icon: '💖', bg: 'bg-rose-50 border-rose-200', text: 'text-rose-700' },
-  { id: 'miss', label: 'Nhớ da diết', icon: '🥺', bg: 'bg-indigo-50 border-indigo-200', text: 'text-indigo-700' },
-  { id: 'happy', label: 'Vui vẻ & Bình yên', icon: '🌸', bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700' },
-  { id: 'proud', label: 'Tự hào chàng lính', icon: '🎖️', bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700' },
-  { id: 'special', label: 'Cuộc gọi / Sự kiện', icon: '📞', bg: 'bg-sky-50 border-sky-200', text: 'text-sky-700' },
-  { id: 'excited', label: 'Háo hức & Động lực', icon: '🌟', bg: 'bg-yellow-50 border-yellow-200', text: 'text-yellow-700' },
-  { id: 'tired', label: 'Mệt nhưng cố gắng', icon: '🔋', bg: 'bg-teal-50 border-teal-200', text: 'text-teal-700' },
-];
+const MOOD_OPTIONS: { id: DailyNoteMood; label: string; icon: string; bg: string; text: string }[] =
+  [
+    {
+      id: 'love',
+      label: 'Yêu thương',
+      icon: '💖',
+      bg: 'bg-rose-50 border-rose-200',
+      text: 'text-rose-700',
+    },
+    {
+      id: 'miss',
+      label: 'Nhớ da diết',
+      icon: '🥺',
+      bg: 'bg-indigo-50 border-indigo-200',
+      text: 'text-indigo-700',
+    },
+    {
+      id: 'happy',
+      label: 'Vui vẻ & Bình yên',
+      icon: '🌸',
+      bg: 'bg-amber-50 border-amber-200',
+      text: 'text-amber-700',
+    },
+    {
+      id: 'proud',
+      label: 'Tự hào chàng lính',
+      icon: '🎖️',
+      bg: 'bg-emerald-50 border-emerald-200',
+      text: 'text-emerald-700',
+    },
+    {
+      id: 'special',
+      label: 'Cuộc gọi / Sự kiện',
+      icon: '📞',
+      bg: 'bg-sky-50 border-sky-200',
+      text: 'text-sky-700',
+    },
+    {
+      id: 'excited',
+      label: 'Háo hức & Động lực',
+      icon: '🌟',
+      bg: 'bg-yellow-50 border-yellow-200',
+      text: 'text-yellow-700',
+    },
+    {
+      id: 'tired',
+      label: 'Mệt nhưng cố gắng',
+      icon: '🔋',
+      bg: 'bg-teal-50 border-teal-200',
+      text: 'text-teal-700',
+    },
+  ];
 
 const SUGGESTED_TAGS = SUGGESTED_NOTE_TAGS;
 
@@ -75,7 +119,7 @@ const DailyNoteForm: React.FC<Omit<DailyNoteModalProps, 'isOpen'>> = ({
 
     const nowIso = new Date().toISOString();
     const finalNote: DailyNote = {
-      id: initialNote ? initialNote.id : `note-${Date.now()}`,
+      id: initialNote ? initialNote.id : newId('note'),
       date,
       content: content.trim(),
       mood,
@@ -122,7 +166,10 @@ const DailyNoteForm: React.FC<Omit<DailyNoteModalProps, 'isOpen'>> = ({
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm">
+        <form
+          onSubmit={handleSubmit}
+          className="p-5 sm:p-6 overflow-y-auto space-y-4 text-xs sm:text-sm"
+        >
           {/* Date Picker */}
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
@@ -258,9 +305,7 @@ const DailyNoteForm: React.FC<Omit<DailyNoteModalProps, 'isOpen'>> = ({
                 <MessageSquare className="w-4 h-4 text-rose-500" />
                 <span>Nội dung ghi chú ngắn:</span>
               </label>
-              <span className="text-[11px] text-slate-400">
-                {content.length} ký tự
-              </span>
+              <span className="text-[11px] text-slate-400">{content.length} ký tự</span>
             </div>
             <textarea
               value={content}

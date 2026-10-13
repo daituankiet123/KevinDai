@@ -93,7 +93,10 @@ export interface AnniversaryStatus {
   formattedDate: string;
 }
 
-export function getAnniversaryStatus(anniv: Anniversary, now: Date = new Date()): AnniversaryStatus {
+export function getAnniversaryStatus(
+  anniv: Anniversary,
+  now: Date = new Date()
+): AnniversaryStatus {
   const currentYear = now.getFullYear();
   let targetYear = currentYear;
 
@@ -124,7 +127,11 @@ export function getAnniversaryStatus(anniv: Anniversary, now: Date = new Date())
     // Specific date
     const fullDate = parseLocalDate(anniv.date);
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const target = new Date(fullDate.getFullYear(), fullDate.getMonth(), fullDate.getDate()).getTime();
+    const target = new Date(
+      fullDate.getFullYear(),
+      fullDate.getMonth(),
+      fullDate.getDate()
+    ).getTime();
     const diff = Math.ceil((target - startOfToday) / (1000 * 60 * 60 * 24));
 
     return {

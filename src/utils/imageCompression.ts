@@ -10,10 +10,7 @@ export interface CompressOptions {
   quality?: number;
 }
 
-export async function compressImage(
-  file: File,
-  options: CompressOptions = {}
-): Promise<string> {
+export async function compressImage(file: File, options: CompressOptions = {}): Promise<string> {
   const maxDimension = options.maxDimension ?? MAX_DIMENSION;
   const quality = options.quality ?? JPEG_QUALITY;
 

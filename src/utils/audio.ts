@@ -5,7 +5,9 @@ let audioCtx: AudioContext | null = null;
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null;
   if (!audioCtx) {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (AudioContextClass) {
       audioCtx = new AudioContextClass();
     }
@@ -50,7 +52,7 @@ export function playSweetChime(enabled: boolean = true) {
     const ctx = getAudioContext();
     if (!ctx) return;
 
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
     notes.forEach((freq, idx) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -110,7 +112,7 @@ export function playCelebrationFanfare(enabled: boolean = true) {
     if (!ctx) return;
     const now = ctx.currentTime;
     // Ascending celebratory fanfare chord: C4, E4, G4, C5, E5, G5
-    const fanfareNotes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+    const fanfareNotes = [261.63, 329.63, 392.0, 523.25, 659.25, 783.99];
     fanfareNotes.forEach((freq, idx) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -140,9 +142,21 @@ let isMusicActive = false;
 // Chord progression: Cmaj7 -> G/B -> Am7 -> Fmaj7
 // Frequencies for soothing notes
 const NOTES_MAP: Record<string, number> = {
-  C3: 130.81, G2: 98.00, A2: 110.00, F2: 87.31,
-  C4: 261.63, D4: 293.66, E4: 329.63, G4: 392.00, A4: 440.00, B4: 493.88,
-  C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880.00,
+  C3: 130.81,
+  G2: 98.0,
+  A2: 110.0,
+  F2: 87.31,
+  C4: 261.63,
+  D4: 293.66,
+  E4: 329.63,
+  G4: 392.0,
+  A4: 440.0,
+  B4: 493.88,
+  C5: 523.25,
+  D5: 587.33,
+  E5: 659.25,
+  G5: 783.99,
+  A5: 880.0,
 };
 
 // 16-step romantic acoustic melody pattern
@@ -169,7 +183,14 @@ const ROMANTIC_PATTERN: Array<{ bass?: string; melody: string[] }> = [
   { melody: ['E4', 'C4'] },
 ];
 
-function playPianoNote(ctx: AudioContext, masterGain: GainNode, freq: number, time: number, duration: number, isBass = false) {
+function playPianoNote(
+  ctx: AudioContext,
+  masterGain: GainNode,
+  freq: number,
+  time: number,
+  duration: number,
+  isBass = false
+) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -198,7 +219,10 @@ export function startRomanticMusic(initialVolume = 0.5) {
     bgMusicMasterGain.connect(ctx.destination);
   }
 
-  bgMusicMasterGain.gain.setValueAtTime(Math.max(0, Math.min(1, initialVolume)) * 0.25, ctx.currentTime);
+  bgMusicMasterGain.gain.setValueAtTime(
+    Math.max(0, Math.min(1, initialVolume)) * 0.25,
+    ctx.currentTime
+  );
   isMusicActive = true;
   bgMusicStep = 0;
 
@@ -245,4 +269,3 @@ export function setRomanticMusicVolume(volume: number) {
 export function isRomanticMusicPlaying(): boolean {
   return isMusicActive;
 }
-

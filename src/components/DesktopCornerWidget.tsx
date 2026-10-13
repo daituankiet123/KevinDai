@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Heart,
-  Pin,
-  Minimize2,
-  Maximize2,
-  X,
-  Compass,
-  Monitor,
-} from 'lucide-react';
+import { Heart, Pin, Minimize2, Maximize2, X, Compass, Monitor } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CoupleData } from '../types';
 import { CountdownState } from '../utils/dateCalculations';
@@ -340,7 +332,9 @@ export const DesktopCornerWidget: React.FC<DesktopCornerWidgetProps> = ({
       }
     } catch (e) {
       console.error('Video PiP failed:', e);
-      alert('Trình duyệt của bạn có thể chưa cấp quyền Picture-in-Picture. Bạn vẫn có thể dùng widget góc màn hình bên dưới nhé!');
+      alert(
+        'Trình duyệt của bạn có thể chưa cấp quyền Picture-in-Picture. Bạn vẫn có thể dùng widget góc màn hình bên dưới nhé!'
+      );
     }
   };
 
@@ -360,24 +354,34 @@ export const DesktopCornerWidget: React.FC<DesktopCornerWidgetProps> = ({
       <canvas ref={canvasRef} className="hidden" />
       <video ref={videoRef} className="hidden" muted playsInline />
 
-      <div
-        className={`fixed z-40 transition-all duration-300 select-none ${positionClasses}`}
-      >
+      <div className={`fixed z-40 transition-all duration-300 select-none ${positionClasses}`}>
         {!isExpanded ? (
           /* Mini Floating Pill Mode */
           <div className="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-full border-2 border-rose-300 shadow-xl hover:shadow-2xl transition group animate-in fade-in zoom-in-90 duration-200">
             {/* Avatars */}
             <div className="flex items-center -space-x-1.5">
               <span className="w-6 h-6 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-xs overflow-hidden">
-                {couple.boyfriendAvatar && (couple.boyfriendAvatar.startsWith('data:') || couple.boyfriendAvatar.startsWith('http')) ? (
-                  <img src={couple.boyfriendAvatar} alt="Boyfriend" className="w-full h-full object-cover" />
+                {couple.boyfriendAvatar &&
+                (couple.boyfriendAvatar.startsWith('data:') ||
+                  couple.boyfriendAvatar.startsWith('http')) ? (
+                  <img
+                    src={couple.boyfriendAvatar}
+                    alt="Boyfriend"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   couple.boyfriendAvatar || '👨‍✈️'
                 )}
               </span>
               <span className="w-6 h-6 rounded-full bg-pink-100 border border-pink-300 flex items-center justify-center text-xs overflow-hidden">
-                {couple.girlfriendAvatar && (couple.girlfriendAvatar.startsWith('data:') || couple.girlfriendAvatar.startsWith('http')) ? (
-                  <img src={couple.girlfriendAvatar} alt="Girlfriend" className="w-full h-full object-cover" />
+                {couple.girlfriendAvatar &&
+                (couple.girlfriendAvatar.startsWith('data:') ||
+                  couple.girlfriendAvatar.startsWith('http')) ? (
+                  <img
+                    src={couple.girlfriendAvatar}
+                    alt="Girlfriend"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   couple.girlfriendAvatar || '👧🌸'
                 )}
@@ -479,8 +483,14 @@ export const DesktopCornerWidget: React.FC<DesktopCornerWidgetProps> = ({
             <div className="flex items-center justify-between gap-2 mb-2.5">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-sm overflow-hidden shrink-0">
-                  {couple.boyfriendAvatar && (couple.boyfriendAvatar.startsWith('data:') || couple.boyfriendAvatar.startsWith('http')) ? (
-                    <img src={couple.boyfriendAvatar} alt="Boyfriend" className="w-full h-full object-cover" />
+                  {couple.boyfriendAvatar &&
+                  (couple.boyfriendAvatar.startsWith('data:') ||
+                    couple.boyfriendAvatar.startsWith('http')) ? (
+                    <img
+                      src={couple.boyfriendAvatar}
+                      alt="Boyfriend"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     couple.boyfriendAvatar || '👨‍✈️'
                   )}
@@ -512,8 +522,14 @@ export const DesktopCornerWidget: React.FC<DesktopCornerWidgetProps> = ({
                   </div>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-pink-100 border border-pink-300 flex items-center justify-center text-sm overflow-hidden shrink-0">
-                  {couple.girlfriendAvatar && (couple.girlfriendAvatar.startsWith('data:') || couple.girlfriendAvatar.startsWith('http')) ? (
-                    <img src={couple.girlfriendAvatar} alt="Girlfriend" className="w-full h-full object-cover" />
+                  {couple.girlfriendAvatar &&
+                  (couple.girlfriendAvatar.startsWith('data:') ||
+                    couple.girlfriendAvatar.startsWith('http')) ? (
+                    <img
+                      src={couple.girlfriendAvatar}
+                      alt="Girlfriend"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     couple.girlfriendAvatar || '👧🌸'
                   )}

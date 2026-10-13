@@ -29,7 +29,9 @@ export const HeartParticles: React.FC<HeartParticlesProps> = ({ enabled }) => {
         id: Date.now() + i + Math.random(),
         x: e.clientX + (Math.random() * 40 - 20),
         y: e.clientY + (Math.random() * 40 - 20),
-        color: ['#f43f5e', '#fb7185', '#fda4af', '#f472b6', '#ec4899'][Math.floor(Math.random() * 5)],
+        color: ['#f43f5e', '#fb7185', '#fda4af', '#f472b6', '#ec4899'][
+          Math.floor(Math.random() * 5)
+        ],
         size: Math.floor(Math.random() * 12) + 14,
         symbol: HEART_ICONS[Math.floor(Math.random() * HEART_ICONS.length)],
       }));

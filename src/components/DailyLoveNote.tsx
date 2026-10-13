@@ -4,16 +4,16 @@ import confetti from 'canvas-confetti';
 import { playHeartPop } from '../utils/audio';
 
 const SWEET_NOTES = [
-  "Khoảng cách không thể làm phai mờ tình yêu, nó chỉ khiến ngày tái ngộ thêm nồng say và trân quý.",
-  "Anh canh giữ bình yên cho Tổ quốc, em gìn giữ hạnh phúc cho tương lai đôi mình.",
-  "Hai năm quân ngũ là thước đo lòng son. Chờ anh về, em sẽ là cô dâu hạnh phúc nhất trần đời.",
-  "Mỗi sáng thức dậy nhìn lịch đếm ngược, em lại biết chúng mình đang tiến gần hơn một bước về phía nhau.",
-  "Dẫu thao trường có nắng cháy hay mưa dầm, nhớ rằng ở hậu phương luôn có một trái tim hướng về anh.",
-  "Người lính kiên cường trên bãi tập, nhưng trước nụ cười của em lại là chàng trai dịu dàng nhất.",
-  "Thời gian trôi không chờ đợi ai, nhưng tình yêu của em sẽ kiên nhẫn đợi anh từng giây từng phút.",
-  "Gửi ngàn nụ hôn và cái ôm ấm áp vào làn gió mát, nhờ gió bay đến nơi đóng quân của anh yêu.",
-  "Yêu một người lính là học cách kiên cường, tự lập và tự hào khôn xiết về người đàn ông của mình.",
-  "Ngày anh khoác ba lô xuất ngũ trở về, em sẽ chạy đến ôm anh thật chặt trước sự ngưỡng mộ của mọi người!"
+  'Khoảng cách không thể làm phai mờ tình yêu, nó chỉ khiến ngày tái ngộ thêm nồng say và trân quý.',
+  'Anh canh giữ bình yên cho Tổ quốc, em gìn giữ hạnh phúc cho tương lai đôi mình.',
+  'Hai năm quân ngũ là thước đo lòng son. Chờ anh về, em sẽ là cô dâu hạnh phúc nhất trần đời.',
+  'Mỗi sáng thức dậy nhìn lịch đếm ngược, em lại biết chúng mình đang tiến gần hơn một bước về phía nhau.',
+  'Dẫu thao trường có nắng cháy hay mưa dầm, nhớ rằng ở hậu phương luôn có một trái tim hướng về anh.',
+  'Người lính kiên cường trên bãi tập, nhưng trước nụ cười của em lại là chàng trai dịu dàng nhất.',
+  'Thời gian trôi không chờ đợi ai, nhưng tình yêu của em sẽ kiên nhẫn đợi anh từng giây từng phút.',
+  'Gửi ngàn nụ hôn và cái ôm ấm áp vào làn gió mát, nhờ gió bay đến nơi đóng quân của anh yêu.',
+  'Yêu một người lính là học cách kiên cường, tự lập và tự hào khôn xiết về người đàn ông của mình.',
+  'Ngày anh khoác ba lô xuất ngũ trở về, em sẽ chạy đến ôm anh thật chặt trước sự ngưỡng mộ của mọi người!',
 ];
 
 interface DailyLoveNoteProps {
@@ -62,7 +62,11 @@ export const DailyLoveNote: React.FC<DailyLoveNoteProps> = ({ soundEnabled }) =>
             title="Sao chép lời nhắn"
             className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-rose-600 bg-white/70 hover:bg-white rounded-lg border border-rose-100 transition"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? (
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+            ) : (
+              <Copy className="w-3.5 h-3.5" />
+            )}
             <span>{copied ? 'Đã chép' : 'Sao chép'}</span>
           </button>
 

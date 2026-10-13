@@ -8,8 +8,8 @@ export const DEFAULT_COUPLE: CoupleData = {
   boyfriendAvatar: '👨‍✈️',
   girlfriendAvatar: '👧🌸',
   militaryStartDate: '2026-03-04', // Ngày nhập ngũ: 04/03/2026
-  militaryEndDate: '2028-01-10',   // Ra quân ngày 10/01/2028
-  datingStartDate: '2024-08-29',   // Quen nhau từ 29/08/2024
+  militaryEndDate: '2028-01-10', // Ra quân ngày 10/01/2028
+  datingStartDate: '2024-08-29', // Quen nhau từ 29/08/2024
   militaryUnit: 'Trường Cao đẳng Hậu cần 2 (Thủ Đức) - Y tá Đại đội',
   sweetQuote: 'Bà Chã Thơm yên tâm đợi nhé, 10/01/2028 Ông Chã Húi ra quân về cưới em!',
   soundEnabled: true,
@@ -86,7 +86,8 @@ export const DEFAULT_ANNIVERSARIES: Anniversary[] = [
     isAnnual: false,
     category: 'military',
     reminderDaysBefore: 3,
-    notes: 'Chiến sĩ Quân y tương lai rèn luyện chuyên môn y khoa tại Thủ Đức để chăm sóc sức khỏe bộ đội!',
+    notes:
+      'Chiến sĩ Quân y tương lai rèn luyện chuyên môn y khoa tại Thủ Đức để chăm sóc sức khỏe bộ đội!',
     icon: '🩺',
   },
   {
@@ -114,21 +115,72 @@ export const DEFAULT_ANNIVERSARIES: Anniversary[] = [
 export const DEFAULT_LETTERS: LoveLetter[] = [];
 
 export const DEFAULT_WISHES: WishItem[] = [
-  { id: 'w-1', title: 'Cái ôm thật chặt và nụ hôn ấm áp ngay cổng doanh trại ngày đón anh Kiệt xuất ngũ', completed: false, category: 'Đón anh về', hearts: 99 },
-  { id: 'w-2', title: 'Nấu một bữa cơm toàn những món anh Kiệt mê mẩn nhất sau 2 năm thao trường', completed: false, category: 'Ăn uống', hearts: 78 },
-  { id: 'w-3', title: 'Anh Kiệt đưa Thanh Tuyền đi du lịch Đà Lạt ngắm sương mù và nắm tay dạo hồ Xuân Hương', completed: false, category: 'Du lịch', hearts: 85 },
-  { id: 'w-4', title: 'Chụp một bộ ảnh đôi kỷ niệm: anh mặc quân phục danh dự, Tuyền mặc áo dài trắng', completed: false, category: 'Kỷ niệm', hearts: 92 },
-  { id: 'w-5', title: 'Cùng nhau đi ăn mừng ngày kỷ niệm quen nhau 29/08 thật hoành tráng', completed: false, category: 'Hẹn hò', hearts: 88 },
-  { id: 'w-6', title: 'Đi xem bộ phim rạp đầu tiên sau chuỗi ngày dài xa cách', completed: false, category: 'Hẹn hò', hearts: 60 },
-  { id: 'w-7', title: 'Được anh đưa đi dạo phố ban đêm và ăn kem ốc quế như những ngày đầu mới quen', completed: false, category: 'Hẹn hò', hearts: 72 },
-  { id: 'w-8', title: 'Bàn chuyện tương lai ngôi nhà chung của Tuấn Kiệt & Thanh Tuyền 💕', completed: false, category: 'Tương lai', hearts: 150 },
+  {
+    id: 'w-1',
+    title: 'Cái ôm thật chặt và nụ hôn ấm áp ngay cổng doanh trại ngày đón anh Kiệt xuất ngũ',
+    completed: false,
+    category: 'Đón anh về',
+    hearts: 99,
+  },
+  {
+    id: 'w-2',
+    title: 'Nấu một bữa cơm toàn những món anh Kiệt mê mẩn nhất sau 2 năm thao trường',
+    completed: false,
+    category: 'Ăn uống',
+    hearts: 78,
+  },
+  {
+    id: 'w-3',
+    title: 'Anh Kiệt đưa Thanh Tuyền đi du lịch Đà Lạt ngắm sương mù và nắm tay dạo hồ Xuân Hương',
+    completed: false,
+    category: 'Du lịch',
+    hearts: 85,
+  },
+  {
+    id: 'w-4',
+    title: 'Chụp một bộ ảnh đôi kỷ niệm: anh mặc quân phục danh dự, Tuyền mặc áo dài trắng',
+    completed: false,
+    category: 'Kỷ niệm',
+    hearts: 92,
+  },
+  {
+    id: 'w-5',
+    title: 'Cùng nhau đi ăn mừng ngày kỷ niệm quen nhau 29/08 thật hoành tráng',
+    completed: false,
+    category: 'Hẹn hò',
+    hearts: 88,
+  },
+  {
+    id: 'w-6',
+    title: 'Đi xem bộ phim rạp đầu tiên sau chuỗi ngày dài xa cách',
+    completed: false,
+    category: 'Hẹn hò',
+    hearts: 60,
+  },
+  {
+    id: 'w-7',
+    title: 'Được anh đưa đi dạo phố ban đêm và ăn kem ốc quế như những ngày đầu mới quen',
+    completed: false,
+    category: 'Hẹn hò',
+    hearts: 72,
+  },
+  {
+    id: 'w-8',
+    title: 'Bàn chuyện tương lai ngôi nhà chung của Tuấn Kiệt & Thanh Tuyền 💕',
+    completed: false,
+    category: 'Tương lai',
+    hearts: 150,
+  },
 ];
 
-const PHOTO_1 = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23ffe4e6"/><stop offset="100%" stop-color="%23fed7aa"/></linearGradient></defs><rect width="600" height="450" rx="24" fill="url(%23bg1)"/><circle cx="300" cy="180" r="85" fill="%23ffffff" opacity="0.9"/><text x="300" y="195" font-size="70" text-anchor="middle">💑</text><text x="300" y="300" font-family="sans-serif" font-weight="bold" font-size="24" fill="%23e11d48" text-anchor="middle">29/08/2024</text><text x="300" y="335" font-family="sans-serif" font-size="16" fill="%2364748b" text-anchor="middle">Ngày định mệnh hai đứa mình chính thức quen nhau</text></svg>';
+const PHOTO_1 =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23ffe4e6"/><stop offset="100%" stop-color="%23fed7aa"/></linearGradient></defs><rect width="600" height="450" rx="24" fill="url(%23bg1)"/><circle cx="300" cy="180" r="85" fill="%23ffffff" opacity="0.9"/><text x="300" y="195" font-size="70" text-anchor="middle">💑</text><text x="300" y="300" font-family="sans-serif" font-weight="bold" font-size="24" fill="%23e11d48" text-anchor="middle">29/08/2024</text><text x="300" y="335" font-family="sans-serif" font-size="16" fill="%2364748b" text-anchor="middle">Ngày định mệnh hai đứa mình chính thức quen nhau</text></svg>';
 
-const PHOTO_2 = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23fce7f3"/><stop offset="100%" stop-color="%23fda4af"/></linearGradient></defs><rect width="600" height="450" rx="24" fill="url(%23bg2)"/><circle cx="300" cy="180" r="85" fill="%23ffffff" opacity="0.9"/><text x="300" y="195" font-size="70" text-anchor="middle">🎂🌸</text><text x="300" y="300" font-family="sans-serif" font-weight="bold" font-size="24" fill="%23be185d" text-anchor="middle">Sinh Nhật Bà Chã Thơm</text><text x="300" y="335" font-family="sans-serif" font-size="16" fill="%2364748b" text-anchor="middle">Lê Thị Thanh Tuyền - 07/04/2004</text></svg>';
+const PHOTO_2 =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23fce7f3"/><stop offset="100%" stop-color="%23fda4af"/></linearGradient></defs><rect width="600" height="450" rx="24" fill="url(%23bg2)"/><circle cx="300" cy="180" r="85" fill="%23ffffff" opacity="0.9"/><text x="300" y="195" font-size="70" text-anchor="middle">🎂🌸</text><text x="300" y="300" font-family="sans-serif" font-weight="bold" font-size="24" fill="%23be185d" text-anchor="middle">Sinh Nhật Bà Chã Thơm</text><text x="300" y="335" font-family="sans-serif" font-size="16" fill="%2364748b" text-anchor="middle">Lê Thị Thanh Tuyền - 07/04/2004</text></svg>';
 
-const PHOTO_3 = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23dcfce7"/><stop offset="100%" stop-color="%23fed7aa"/></linearGradient></defs><rect width="600" height="450" rx="24" fill="url(%23bg3)"/><circle cx="300" cy="180" r="85" fill="%23ffffff" opacity="0.9"/><text x="300" y="195" font-size="70" text-anchor="middle">🎖️👨‍✈️</text><text x="300" y="300" font-family="sans-serif" font-weight="bold" font-size="22" fill="%2315803d" text-anchor="middle">Trung đoàn 88 - Sư đoàn 302</text><text x="300" y="335" font-family="sans-serif" font-size="16" fill="%2364748b" text-anchor="middle">Chàng lính Đại Tuấn Kiệt rèn luyện vì Tổ quốc</text></svg>';
+const PHOTO_3 =
+  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="450" viewBox="0 0 600 450"><defs><linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23dcfce7"/><stop offset="100%" stop-color="%23fed7aa"/></linearGradient></defs><rect width="600" height="450" rx="24" fill="url(%23bg3)"/><circle cx="300" cy="180" r="85" fill="%23ffffff" opacity="0.9"/><text x="300" y="195" font-size="70" text-anchor="middle">🎖️👨‍✈️</text><text x="300" y="300" font-family="sans-serif" font-weight="bold" font-size="22" fill="%2315803d" text-anchor="middle">Trung đoàn 88 - Sư đoàn 302</text><text x="300" y="335" font-family="sans-serif" font-size="16" fill="%2364748b" text-anchor="middle">Chàng lính Đại Tuấn Kiệt rèn luyện vì Tổ quốc</text></svg>';
 
 export const DEFAULT_PHOTOS: CouplePhoto[] = [
   {
@@ -167,7 +219,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-1',
     date: '2026-03-04',
-    content: 'Ngày tiễn anh lên đường nhập ngũ. Nhìn bóng lưng anh bước qua cổng doanh trại mà rưng rưng, nhưng em tự hào về anh lắm! Hứa ở nhà ngoan đợi anh về.',
+    content:
+      'Ngày tiễn anh lên đường nhập ngũ. Nhìn bóng lưng anh bước qua cổng doanh trại mà rưng rưng, nhưng em tự hào về anh lắm! Hứa ở nhà ngoan đợi anh về.',
     mood: 'proud',
     author: 'girlfriend',
     tag: 'Lên đường nhập ngũ',
@@ -177,7 +230,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-2',
     date: '2026-03-15',
-    content: 'Cuộc gọi 3 phút đầu tiên từ bưu cục đơn vị tân binh! Nghe giọng anh khỏe re, dặn em ăn uống đầy đủ là an tâm rồi. Yêu anh nhiều lắm!',
+    content:
+      'Cuộc gọi 3 phút đầu tiên từ bưu cục đơn vị tân binh! Nghe giọng anh khỏe re, dặn em ăn uống đầy đủ là an tâm rồi. Yêu anh nhiều lắm!',
     mood: 'special',
     author: 'girlfriend',
     tag: 'Cuộc gọi đơn vị',
@@ -187,7 +241,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-3',
     date: '2026-04-12',
-    content: 'Chuyến thăm nuôi tân binh đầu tiên! Mang cho anh hộp thịt kho và trái cây em tự tay làm, nhìn anh rắn rỏi và chững chạc hẳn lên, thương ghê gớm.',
+    content:
+      'Chuyến thăm nuôi tân binh đầu tiên! Mang cho anh hộp thịt kho và trái cây em tự tay làm, nhìn anh rắn rỏi và chững chạc hẳn lên, thương ghê gớm.',
     mood: 'love',
     author: 'girlfriend',
     tag: 'Thăm nuôi',
@@ -197,7 +252,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-4',
     date: '2026-06-15',
-    content: 'Anh chính thức chuyển sang học Y tá Đại đội tại Trường Cao đẳng Hậu cần 2 ở Thủ Đức! Gần em hơn một chút rồi, sắp được gặp nhau thường xuyên hơn!',
+    content:
+      'Anh chính thức chuyển sang học Y tá Đại đội tại Trường Cao đẳng Hậu cần 2 ở Thủ Đức! Gần em hơn một chút rồi, sắp được gặp nhau thường xuyên hơn!',
     mood: 'excited',
     author: 'both',
     tag: 'Học Y tá Đại đội',
@@ -207,7 +263,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-5',
     date: '2026-08-29',
-    content: 'Tròn 2 năm ngày hai đứa yêu nhau (29/08/2024 - 29/08/2026). Dù xa cách địa lý nhưng tình cảm chúng mình ngày càng bền chặt.',
+    content:
+      'Tròn 2 năm ngày hai đứa yêu nhau (29/08/2024 - 29/08/2026). Dù xa cách địa lý nhưng tình cảm chúng mình ngày càng bền chặt.',
     mood: 'love',
     author: 'both',
     tag: 'Kỷ niệm',
@@ -217,7 +274,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-6',
     date: '2026-09-18',
-    content: 'Hôm nay đơn vị diễn tập đêm và hành quân dã ngoại. Mệt nhoài nhưng nghĩ đến ngày 10/01/2028 ra quân về cưới em là bao mệt mỏi tan biến!',
+    content:
+      'Hôm nay đơn vị diễn tập đêm và hành quân dã ngoại. Mệt nhoài nhưng nghĩ đến ngày 10/01/2028 ra quân về cưới em là bao mệt mỏi tan biến!',
     mood: 'proud',
     author: 'boyfriend',
     tag: 'Thao trường',
@@ -227,7 +285,8 @@ export const DEFAULT_DAILY_NOTES: DailyNote[] = [
   {
     id: 'note-sample-7',
     date: '2026-10-04',
-    content: 'Gửi bức thư tay kèm vài tấm ảnh thẻ đôi vào đơn vị cho anh. Hy vọng đầu tuần tới chàng lính của em sẽ nhận được niềm vui bất ngờ này!',
+    content:
+      'Gửi bức thư tay kèm vài tấm ảnh thẻ đôi vào đơn vị cho anh. Hy vọng đầu tuần tới chàng lính của em sẽ nhận được niềm vui bất ngờ này!',
     mood: 'miss',
     author: 'girlfriend',
     tag: 'Gửi thư tay',
@@ -245,26 +304,33 @@ const STORAGE_KEYS = {
   DAILY_NOTES: 'love_soldier_daily_notes_v4',
 };
 
+// One-time migration flag: set after the initial "old defaults" correction ran,
+// so user edits made later are never overwritten on reload.
+const COUPLE_MIGRATION_FLAG = 'love_soldier_couple_migrated_v4';
+
 export function loadCoupleData(): CoupleData {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.COUPLE);
     if (!raw) return DEFAULT_COUPLE;
+
     const parsed = JSON.parse(raw);
-    // Ensure accurate military start (04/03/2026) and discharge (10/01/2028)
-    if (parsed.militaryStartDate !== '2026-03-04' || parsed.militaryEndDate !== '2028-01-10') {
-      const updated = {
-        ...parsed,
-        boyfriendName: parsed.boyfriendName || 'Đại Tuấn Kiệt',
-        girlfriendName: parsed.girlfriendName || 'Lê Thị Thanh Tuyền',
-        militaryUnit: 'Trường Cao đẳng Hậu cần 2 (Thủ Đức) - Y tá Đại đội',
-        militaryStartDate: '2026-03-04',
-        militaryEndDate: '2028-01-10',
-        datingStartDate: '2024-08-29',
-        sweetQuote: 'Bà Chã Thơm yên tâm đợi nhé, 10/01/2028 Ông Chã Húi ra quân về cưới em!',
-      };
-      saveCoupleData(updated);
-      return updated;
+
+    // Run the legacy "old dates" correction only once (for users who still have
+    // the outdated 2026-04-04/2028-04-04 defaults from before the fix).
+    if (localStorage.getItem(COUPLE_MIGRATION_FLAG) !== '1') {
+      localStorage.setItem(COUPLE_MIGRATION_FLAG, '1');
+      if (parsed.militaryStartDate === '2026-04-04' || parsed.militaryEndDate === '2028-04-04') {
+        const updated = {
+          ...parsed,
+          militaryStartDate: DEFAULT_COUPLE.militaryStartDate,
+          militaryEndDate: DEFAULT_COUPLE.militaryEndDate,
+          militaryUnit: DEFAULT_COUPLE.militaryUnit,
+        };
+        saveCoupleData(updated);
+        return updated;
+      }
     }
+
     return { ...DEFAULT_COUPLE, ...parsed };
   } catch {
     return DEFAULT_COUPLE;
@@ -279,6 +345,9 @@ export function saveCoupleData(data: CoupleData) {
   }
 }
 
+// One-time migration flag for anniversaries (same rationale as couple migration).
+const ANNIVERSARIES_MIGRATION_FLAG = 'love_soldier_anniversaries_migrated_v4';
+
 export function loadAnniversaries(): Anniversary[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.ANNIVERSARIES);
@@ -287,10 +356,20 @@ export function loadAnniversaries(): Anniversary[] {
       return DEFAULT_ANNIVERSARIES;
     }
     const parsed: Anniversary[] = JSON.parse(raw);
-    // Auto-update if old dates detected
-    if (parsed.some((a) => a.date === '2026-04-04' || a.date === '2028-04-04' || (a.id === 'anniv-5' && a.date !== '2026-03-04'))) {
-      saveAnniversaries(DEFAULT_ANNIVERSARIES);
-      return DEFAULT_ANNIVERSARIES;
+    // Auto-update if old dates detected (runs once, so later user edits survive).
+    if (localStorage.getItem(ANNIVERSARIES_MIGRATION_FLAG) !== '1') {
+      localStorage.setItem(ANNIVERSARIES_MIGRATION_FLAG, '1');
+      if (
+        parsed.some(
+          (a) =>
+            a.date === '2026-04-04' ||
+            a.date === '2028-04-04' ||
+            (a.id === 'anniv-5' && a.date !== '2026-03-04')
+        )
+      ) {
+        saveAnniversaries(DEFAULT_ANNIVERSARIES);
+        return DEFAULT_ANNIVERSARIES;
+      }
     }
     return parsed;
   } catch {
@@ -375,6 +454,3 @@ export function saveDailyNotes(data: DailyNote[]) {
     console.error('Save daily notes error:', e);
   }
 }
-
-
-

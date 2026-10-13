@@ -54,11 +54,10 @@ export const DesktopExeModal: React.FC<DesktopExeModalProps> = ({
             📥
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-800">
-              Tải Bản Đóng Gói Ứng Dụng Về Máy
-            </h2>
+            <h2 className="text-xl font-bold text-slate-800">Tải Bản Đóng Gói Ứng Dụng Về Máy</h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Đã đóng gói hoàn chỉnh sẵn sàng chạy offline 100% trên mọi máy tính (Windows, Mac, Linux).
+              Đã đóng gói hoàn chỉnh sẵn sàng chạy offline 100% trên mọi máy tính (Windows, Mac,
+              Linux).
             </p>
           </div>
         </div>
@@ -81,7 +80,8 @@ export const DesktopExeModal: React.FC<DesktopExeModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  Bao gồm toàn bộ mã nguồn đóng gói, file khởi chạy nhanh <code>Chay_Ung_Dung_Windows.bat</code> và tài nguyên chạy offline.
+                  Bao gồm toàn bộ mã nguồn đóng gói, file khởi chạy nhanh{' '}
+                  <code>Chay_Ung_Dung_Windows.bat</code> và tài nguyên chạy offline.
                 </p>
                 <div className="text-[11px] text-slate-400 font-mono mt-1 truncate max-w-xs sm:max-w-md">
                   {zipDownloadUrl}
@@ -105,7 +105,11 @@ export const DesktopExeModal: React.FC<DesktopExeModalProps> = ({
                 title="Sao chép link tải trực tiếp"
                 className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-white hover:bg-rose-100 border border-rose-200 transition whitespace-nowrap"
               >
-                {copiedZipUrl ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-rose-500" />}
+                {copiedZipUrl ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5 text-rose-500" />
+                )}
                 <span>{copiedZipUrl ? 'Đã chép link' : 'Chép link tải'}</span>
               </button>
             </div>
@@ -127,7 +131,8 @@ export const DesktopExeModal: React.FC<DesktopExeModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
-                  Toàn bộ ứng dụng đóng gói thành đúng 1 tệp HTML duy nhất. Nhấp đúp mở bằng mọi trình duyệt là chạy ngay lập tức.
+                  Toàn bộ ứng dụng đóng gói thành đúng 1 tệp HTML duy nhất. Nhấp đúp mở bằng mọi
+                  trình duyệt là chạy ngay lập tức.
                 </p>
                 <div className="text-[11px] text-slate-400 font-mono mt-1 truncate max-w-xs sm:max-w-md">
                   {htmlDownloadUrl}
@@ -151,7 +156,11 @@ export const DesktopExeModal: React.FC<DesktopExeModalProps> = ({
                 title="Sao chép link tải trực tiếp"
                 className="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 bg-white hover:bg-emerald-100 border border-emerald-200 transition whitespace-nowrap"
               >
-                {copiedHtmlUrl ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-emerald-600" />}
+                {copiedHtmlUrl ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5 text-emerald-600" />
+                )}
                 <span>{copiedHtmlUrl ? 'Đã chép link' : 'Chép link tải'}</span>
               </button>
             </div>

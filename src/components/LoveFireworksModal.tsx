@@ -97,7 +97,12 @@ export const LoveFireworksModal: React.FC<LoveFireworksModalProps> = ({
       for (let t = 0; t < Math.PI * 2; t += 0.15) {
         // Heart formula: x = 16 sin^3(t), y = 13 cos(t) - 5 cos(2t) - 2 cos(3t) - cos(4t)
         const hx = 16 * Math.pow(Math.sin(t), 3);
-        const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        const hy = -(
+          13 * Math.cos(t) -
+          5 * Math.cos(2 * t) -
+          2 * Math.cos(3 * t) -
+          Math.cos(4 * t)
+        );
         const speed = 0.18 + Math.random() * 0.08;
 
         particles.push({
@@ -166,10 +171,7 @@ export const LoveFireworksModal: React.FC<LoveFireworksModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Background Canvas Fireworks */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none z-10"
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-10" />
 
       {/* Backdrop */}
       <div
@@ -218,10 +220,15 @@ export const LoveFireworksModal: React.FC<LoveFireworksModalProps> = ({
         <div className="bg-white/90 rounded-2xl p-4 border border-rose-200 shadow-inner mb-6 text-left space-y-1.5">
           <div className="flex items-center gap-1.5 text-xs font-extrabold text-rose-600">
             <Heart className="w-3.5 h-3.5 fill-rose-500" />
-            <span>Dành riêng cho {boyfriendName} &amp; {girlfriendName}:</span>
+            <span>
+              Dành riêng cho {boyfriendName} &amp; {girlfriendName}:
+            </span>
           </div>
           <p className="font-script text-lg sm:text-xl text-slate-800 leading-snug">
-            "{milestone.girlfriendMessage || 'Tình yêu vượt qua 2 năm thử thách thao trường, mỗi cột mốc hoàn thành là một bước tiến gần hơn tới ngày sum vầy vĩnh cửu!'}"
+            "
+            {milestone.girlfriendMessage ||
+              'Tình yêu vượt qua 2 năm thử thách thao trường, mỗi cột mốc hoàn thành là một bước tiến gần hơn tới ngày sum vầy vĩnh cửu!'}
+            "
           </p>
         </div>
 

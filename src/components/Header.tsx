@@ -37,8 +37,16 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const navItems = [
     { id: 'countdown', label: 'Đếm ngược' },
-    { id: 'notes', label: 'Ghi chú ngày', badge: totalNotesCount > 0 ? totalNotesCount : undefined },
-    { id: 'anniversaries', label: 'Kỷ niệm', badge: urgentAnniversariesCount > 0 ? urgentAnniversariesCount : undefined },
+    {
+      id: 'notes',
+      label: 'Ghi chú ngày',
+      badge: totalNotesCount > 0 ? totalNotesCount : undefined,
+    },
+    {
+      id: 'anniversaries',
+      label: 'Kỷ niệm',
+      badge: urgentAnniversariesCount > 0 ? urgentAnniversariesCount : undefined,
+    },
     { id: 'album', label: 'Album ảnh' },
     { id: 'milestones', label: 'Chặng đường' },
     { id: 'letters', label: 'Hộp thư' },
@@ -124,7 +132,9 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             title={rainHeartsEnabled ? 'Tắt mưa trái tim' : 'Bật mưa trái tim'}
             className={`p-2 rounded-full transition ${
-              rainHeartsEnabled ? 'text-rose-600 bg-rose-100 hover:bg-rose-200' : 'text-slate-400 hover:bg-rose-50'
+              rainHeartsEnabled
+                ? 'text-rose-600 bg-rose-100 hover:bg-rose-200'
+                : 'text-slate-400 hover:bg-rose-50'
             }`}
           >
             <Sparkles className="w-4 h-4" />
@@ -138,7 +148,9 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             title={soundEnabled ? 'Tắt âm thanh hiệu ứng' : 'Bật âm thanh hiệu ứng'}
             className={`p-2 rounded-full transition ${
-              soundEnabled ? 'text-rose-600 bg-rose-100 hover:bg-rose-200' : 'text-slate-400 hover:bg-rose-50'
+              soundEnabled
+                ? 'text-rose-600 bg-rose-100 hover:bg-rose-200'
+                : 'text-slate-400 hover:bg-rose-50'
             }`}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -150,9 +162,15 @@ export const Header: React.FC<HeaderProps> = ({
               onToggleCornerWidget();
               playHeartPop(soundEnabled);
             }}
-            title={isCornerWidgetVisible ? 'Đang ghim widget góc màn hình (Nhấn để ẩn)' : 'Ghim widget góc màn hình nhỏ gọn'}
+            title={
+              isCornerWidgetVisible
+                ? 'Đang ghim widget góc màn hình (Nhấn để ẩn)'
+                : 'Ghim widget góc màn hình nhỏ gọn'
+            }
             className={`p-2 rounded-full transition ${
-              isCornerWidgetVisible ? 'text-rose-600 bg-rose-100 hover:bg-rose-200 ring-1 ring-rose-300' : 'text-slate-400 hover:bg-rose-50'
+              isCornerWidgetVisible
+                ? 'text-rose-600 bg-rose-100 hover:bg-rose-200 ring-1 ring-rose-300'
+                : 'text-slate-400 hover:bg-rose-50'
             }`}
           >
             <Pin className={`w-4 h-4 ${isCornerWidgetVisible ? 'fill-rose-500' : ''}`} />
@@ -213,4 +231,3 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
-

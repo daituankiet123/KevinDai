@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { WishItem } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
 import { useConfirm } from '../hooks/useConfirm';
+import { newId } from '../utils/id';
 
 interface WishListSectionProps {
   wishes: WishItem[];
@@ -14,7 +15,15 @@ interface WishListSectionProps {
   soundEnabled: boolean;
 }
 
-const WISH_CATEGORIES = ['Tất cả', 'Đón anh về', 'Ăn uống', 'Du lịch', 'Kỷ niệm', 'Hẹn hò', 'Tương lai'];
+const WISH_CATEGORIES = [
+  'Tất cả',
+  'Đón anh về',
+  'Ăn uống',
+  'Du lịch',
+  'Kỷ niệm',
+  'Hẹn hò',
+  'Tương lai',
+];
 
 export const WishListSection: React.FC<WishListSectionProps> = ({
   wishes,
@@ -57,7 +66,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
     if (!newTitle.trim()) return;
 
     const newItem: WishItem = {
-      id: `wish-${Date.now()}`,
+      id: newId('wish'),
       title: newTitle.trim(),
       completed: false,
       category: newCategory,
@@ -70,9 +79,8 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
     setShowAddModal(false);
   };
 
-  const filteredWishes = activeCategory === 'Tất cả'
-    ? wishes
-    : wishes.filter((w) => w.category === activeCategory);
+  const filteredWishes =
+    activeCategory === 'Tất cả' ? wishes : wishes.filter((w) => w.category === activeCategory);
 
   return (
     <div className="space-y-6">
@@ -81,9 +89,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-xl">✨</span>
-            <h2 className="text-lg font-bold text-slate-800">
-              Hộp Ước Nguyện Khi Anh Về (2028)
-            </h2>
+            <h2 className="text-lg font-bold text-slate-800">Hộp Ước Nguyện Khi Anh Về (2028)</h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
             Những điều ngọt ngào nhất định hai đứa mình sẽ cùng làm sau ngày anh xuất ngũ.
@@ -112,13 +118,16 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
         <div className="flex items-center justify-between text-xs font-bold">
           <span className="text-slate-600">Tiến độ chuẩn bị cho ngày sum họp:</span>
           <span className="text-rose-600">
-            {wishes.length > 0 ? Math.round((completedCount / wishes.length) * 100) : 0}% ({completedCount}/{wishes.length} điều ước)
+            {wishes.length > 0 ? Math.round((completedCount / wishes.length) * 100) : 0}% (
+            {completedCount}/{wishes.length} điều ước)
           </span>
         </div>
         <div className="h-2.5 w-full bg-rose-100 rounded-full overflow-hidden p-0.5">
           <div
             className="h-full bg-gradient-to-r from-emerald-500 to-rose-500 rounded-full transition-all duration-500"
-            style={{ width: `${wishes.length > 0 ? Math.round((completedCount / wishes.length) * 100) : 0}%` }}
+            style={{
+              width: `${wishes.length > 0 ? Math.round((completedCount / wishes.length) * 100) : 0}%`,
+            }}
           />
         </div>
       </div>

@@ -57,6 +57,15 @@ Hiện đã hoàn thành **Giai đoạn 4 (chất lượng & trải nghiệm)**.
 - `.gitignore`: thêm `dist-singlefile/`, `public/*.zip`, `public/*.html` (build artifacts được sinh lại khi build); untrack các artifacts đã bị git track
 - Thêm GitHub Actions CI `.github/workflows/ci.yml` (lint + typecheck + test + build, node 20, npm ci)
 
+## Giai đoạn 5 — Củng cố & refactor ✅
+
+- **Fix storage migration cứng nhắc**: `loadCoupleData`/`loadAnniversaries` giờ dùng cờ one-time (`*_migrated_v4`) — không còn ép cứng ngày nhập ngũ/ra quân mỗi lần load (user sửa settings giờ không bị reset)
+- **Untrack build artifacts** còn sót: `dist-singlefile/*`, `dev-dist/*` (thêm `dev-dist/` vào `.gitignore`)
+- **ID unique**: tạo `src/utils/id.ts` (`newId` dùng `crypto.randomUUID()`) thay `Date.now()` ở 5 điểm tạo id (note, anniv, wish, letter, photo)
+- **IndexedDB error surfacing**: `savePhotosIndexedDB` không nuốt lỗi; store dùng `persistPhotos()` để ghi log khi lưu ảnh thất bại
+- **Tách component lớn**: `PhotoAlbumSection` (694 → 320 dòng) tách thành `PhotoAddModal` + `PhotoCard` + `PhotoLightbox`; `DailyNotesSection` (919 → 390 dòng) tách thành `DailyNotesFilter` + `DailyNoteListItem`
+- **Tăng test**: thêm `store.test.ts` (9 action tests) + `id.test.ts` (3 tests) → **36/36 tests pass**
+
 ### Trạng thái verify cuối
 
 | Kiểm tra | Kết quả |
@@ -83,3 +92,7 @@ Hiện đã hoàn thành **Giai đoạn 4 (chất lượng & trải nghiệm)**.
 | `src/utils/*.test.ts` | 22 tests đang pass |
 | `electron.cjs`, `metadata.json`, `.env.example` | đã sửa (security, bỏ Gemini) |
 | `.github/workflows/ci.yml` | CI (lint + typecheck + test + build) |
+| `src/utils/id.ts` | `newId()` dùng `crypto.randomUUID()` |
+| `src/components/PhotoAddModal.tsx` / `PhotoCard.tsx` / `PhotoLightbox.tsx` | tách từ `PhotoAlbumSection` |
+| `src/components/DailyNotesFilter.tsx` / `DailyNoteListItem.tsx` | tách từ `DailyNotesSection` |
+| `src/store.test.ts` / `src/utils/id.test.ts` | 12 test store actions + id |

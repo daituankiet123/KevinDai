@@ -1,12 +1,5 @@
 import { create } from 'zustand';
-import {
-  CoupleData,
-  Anniversary,
-  LoveLetter,
-  WishItem,
-  CouplePhoto,
-  DailyNote,
-} from './types';
+import { CoupleData, Anniversary, LoveLetter, WishItem, CouplePhoto, DailyNote } from './types';
 import {
   loadCoupleData,
   saveCoupleData,
@@ -21,6 +14,15 @@ import {
   DEFAULT_PHOTOS,
 } from './utils/storage';
 import { loadPhotosIndexedDB, savePhotosIndexedDB } from './utils/photoStorage';
+
+// Persist photos to IndexedDB, surfacing write failures instead of swallowing them.
+async function persistPhotos(photos: CouplePhoto[]): Promise<void> {
+  try {
+    await savePhotosIndexedDB(photos);
+  } catch (e) {
+    console.error('Không thể lưu ảnh vào IndexedDB:', e);
+  }
+}
 
 interface AppState {
   couple: CoupleData;
@@ -116,18 +118,14 @@ export const useAppStore = create<AppState>((set) => ({
 
   toggleWish: (id) =>
     set((state) => {
-      const wishes = state.wishes.map((w) =>
-        w.id === id ? { ...w, completed: !w.completed } : w
-      );
+      const wishes = state.wishes.map((w) => (w.id === id ? { ...w, completed: !w.completed } : w));
       saveWishes(wishes);
       return { wishes };
     }),
 
   heartWish: (id) =>
     set((state) => {
-      const wishes = state.wishes.map((w) =>
-        w.id === id ? { ...w, hearts: w.hearts + 1 } : w
-      );
+      const wishes = state.wishes.map((w) => (w.id === id ? { ...w, hearts: w.hearts + 1 } : w));
       saveWishes(wishes);
       return { wishes };
     }),
@@ -142,14 +140,14 @@ export const useAppStore = create<AppState>((set) => ({
   addPhoto: (photo) =>
     set((state) => {
       const photos = [photo, ...state.photos];
-      savePhotosIndexedDB(photos);
+      persistPhotos(photos);
       return { photos };
     }),
 
   deletePhoto: (id) =>
     set((state) => {
       const photos = state.photos.filter((p) => p.id !== id);
-      savePhotosIndexedDB(photos);
+      persistPhotos(photos);
       return { photos };
     }),
 
@@ -158,25 +156,21 @@ export const useAppStore = create<AppState>((set) => ({
       const photos = state.photos.map((p) =>
         p.id === id ? { ...p, isFavorite: !p.isFavorite } : p
       );
-      savePhotosIndexedDB(photos);
+      persistPhotos(photos);
       return { photos };
     }),
 
   heartPhoto: (id) =>
     set((state) => {
-      const photos = state.photos.map((p) =>
-        p.id === id ? { ...p, hearts: p.hearts + 1 } : p
-      );
-      savePhotosIndexedDB(photos);
+      const photos = state.photos.map((p) => (p.id === id ? { ...p, hearts: p.hearts + 1 } : p));
+      persistPhotos(photos);
       return { photos };
     }),
 
   editPhotoCaption: (id, caption) =>
     set((state) => {
-      const photos = state.photos.map((p) =>
-        p.id === id ? { ...p, caption } : p
-      );
-      savePhotosIndexedDB(photos);
+      const photos = state.photos.map((p) => (p.id === id ? { ...p, caption } : p));
+      persistPhotos(photos);
       return { photos };
     }),
 
@@ -214,7 +208,9 @@ export const useAppStore = create<AppState>((set) => ({
     }),
 
   importData: (data) => {
-    const next: Partial<Pick<AppState, 'couple' | 'anniversaries' | 'letters' | 'wishes' | 'photos' | 'dailyNotes'>> = {};
+    const next: Partial<
+      Pick<AppState, 'couple' | 'anniversaries' | 'letters' | 'wishes' | 'photos' | 'dailyNotes'>
+    > = {};
     if (data.couple) {
       saveCoupleData(data.couple as CoupleData);
       next.couple = data.couple as CoupleData;
@@ -232,7 +228,7 @@ export const useAppStore = create<AppState>((set) => ({
       next.wishes = data.wishes as WishItem[];
     }
     if (data.photos) {
-      savePhotosIndexedDB(data.photos as CouplePhoto[]);
+      persistPhotos(data.photos as CouplePhoto[]);
       next.photos = data.photos as CouplePhoto[];
     }
     if (Array.isArray(data.dailyNotes)) {

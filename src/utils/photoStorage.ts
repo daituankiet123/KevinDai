@@ -31,11 +31,7 @@ export async function loadPhotosIndexedDB(defaultPhotos: CouplePhoto[]): Promise
 }
 
 export async function savePhotosIndexedDB(photos: CouplePhoto[]): Promise<void> {
-  try {
-    await set(IDB_KEY, photos);
-  } catch (e) {
-    console.error('Save photos (IndexedDB) error:', e);
-  }
+  await set(IDB_KEY, photos);
 }
 
 export async function clearPhotosIndexedDB(): Promise<void> {

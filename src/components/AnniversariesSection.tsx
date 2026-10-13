@@ -1,10 +1,20 @@
 import React, { useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
-import { Calendar, Plus, Bell, BellRing, Trash2, CheckCircle2, Sparkles, CalendarPlus } from 'lucide-react';
+import {
+  Calendar,
+  Plus,
+  Bell,
+  BellRing,
+  Trash2,
+  CheckCircle2,
+  Sparkles,
+  CalendarPlus,
+} from 'lucide-react';
 import { Anniversary, AnniversaryCategory } from '../types';
 import { getAnniversaryStatus, AnniversaryStatus } from '../utils/dateCalculations';
 import { playBellNotification, playHeartPop, playSweetChime } from '../utils/audio';
 import { useConfirm } from '../hooks/useConfirm';
+import { newId } from '../utils/id';
 
 interface AnniversariesSectionProps {
   anniversaries: Anniversary[];
@@ -106,7 +116,7 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
     if (!newTitle.trim() || !newDate) return;
 
     const anniv: Anniversary = {
-      id: `anniv-${Date.now()}`,
+      id: newId('anniv'),
       title: newTitle.trim(),
       date: newDate,
       isAnnual: newIsAnnual,
@@ -127,20 +137,20 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
   };
 
   const handleExportCalendar = () => {
-    let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Cho Anh Ve//VN\nCALSCALE:GREGORIAN\n";
+    let ics = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Cho Anh Ve//VN\nCALSCALE:GREGORIAN\n';
     anniversaries.forEach((a) => {
       const cleanDate = a.date.replace(/-/g, '');
-      ics += "BEGIN:VEVENT\n";
+      ics += 'BEGIN:VEVENT\n';
       ics += `SUMMARY:${a.title}\n`;
       ics += `DESCRIPTION:${a.notes || 'Kỷ niệm tình yêu Chờ Anh Về'}\n`;
       ics += `DTSTART;VALUE=DATE:${cleanDate}\n`;
       ics += `DTEND;VALUE=DATE:${cleanDate}\n`;
       if (a.isAnnual) {
-        ics += "RRULE:FREQ=YEARLY\n";
+        ics += 'RRULE:FREQ=YEARLY\n';
       }
-      ics += "END:VEVENT\n";
+      ics += 'END:VEVENT\n';
     });
-    ics += "END:VCALENDAR";
+    ics += 'END:VCALENDAR';
 
     const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -153,9 +163,8 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
     playSweetChime(soundEnabled);
   };
 
-  const filteredStatuses = filter === 'all'
-    ? statuses
-    : statuses.filter((s) => s.anniversary.category === filter);
+  const filteredStatuses =
+    filter === 'all' ? statuses : statuses.filter((s) => s.anniversary.category === filter);
 
   return (
     <div className="space-y-6">
@@ -286,8 +295,8 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
                 isToday
                   ? 'border-2 border-rose-500 ring-2 ring-rose-200 bg-rose-50/40'
                   : isUrgent
-                  ? 'border-amber-300 bg-amber-50/20'
-                  : 'border-rose-100'
+                    ? 'border-amber-300 bg-amber-50/20'
+                    : 'border-rose-100'
               }`}
             >
               <div>

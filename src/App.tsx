@@ -65,7 +65,9 @@ export default function App() {
 
   const [isExeModalOpen, setIsExeModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [celebratingMilestone, setCelebratingMilestone] = useState<MilestoneCelebrationData | null>(null);
+  const [celebratingMilestone, setCelebratingMilestone] = useState<MilestoneCelebrationData | null>(
+    null
+  );
   const [isFireworksOpen, setIsFireworksOpen] = useState(false);
 
   const [isCornerWidgetVisible, setIsCornerWidgetVisible] = useState<boolean>(() => {
@@ -123,7 +125,8 @@ export default function App() {
       rank: 'Chiến sĩ kiên định ⭐',
       icon: '🎖️',
       description: `Đã cùng nhau vượt qua ${countdown.daysPassed} ngày trên chặng đường 24 tháng rèn luyện tại ${couple.militaryUnit || 'Trường Cao đẳng Hậu cần 2, Thủ Đức'}.`,
-      girlfriendMessage: 'Bà Chã Thơm luôn là hậu phương ấm áp nhất, cùng Ông Chã Húi đếm từng ngày đón anh về 10/01/2028!',
+      girlfriendMessage:
+        'Bà Chã Thơm luôn là hậu phương ấm áp nhất, cùng Ông Chã Húi đếm từng ngày đón anh về 10/01/2028!',
     };
     setCelebratingMilestone(data);
     setIsFireworksOpen(true);
@@ -259,9 +262,7 @@ export default function App() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-xl">🔔</span>
-                      <h3 className="font-bold text-slate-800 text-base">
-                        Sự Kiện &amp; Kỷ Niệm
-                      </h3>
+                      <h3 className="font-bold text-slate-800 text-base">Sự Kiện &amp; Kỷ Niệm</h3>
                     </div>
                     <button
                       onClick={() => setActiveTab('anniversaries')}
@@ -283,7 +284,9 @@ export default function App() {
                             <span className="text-base">{a.icon || '💖'}</span>
                             <div className="truncate max-w-[130px]">
                               <div className="font-bold text-slate-800 truncate">{a.title}</div>
-                              <div className="text-[10px] text-slate-400">{status.formattedDate}</div>
+                              <div className="text-[10px] text-slate-400">
+                                {status.formattedDate}
+                              </div>
                             </div>
                           </div>
                           <span className="font-bold text-rose-600 bg-white px-2 py-0.5 rounded-lg border border-rose-100 shrink-0 text-[11px]">
@@ -312,9 +315,7 @@ export default function App() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-xl">📸</span>
-                      <h3 className="font-bold text-slate-800 text-base">
-                        Album Kỷ Niệm
-                      </h3>
+                      <h3 className="font-bold text-slate-800 text-base">Album Kỷ Niệm</h3>
                     </div>
                     <button
                       onClick={() => setActiveTab('album')}
@@ -358,9 +359,7 @@ export default function App() {
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <span className="text-xl">💫</span>
-                      <h3 className="font-bold text-slate-800 text-base">
-                        Ước Nguyện Khi Anh Về
-                      </h3>
+                      <h3 className="font-bold text-slate-800 text-base">Ước Nguyện Khi Anh Về</h3>
                     </div>
                     <button
                       onClick={() => setActiveTab('wishes')}
@@ -479,7 +478,8 @@ export default function App() {
           <span>💖</span>
         </div>
         <p className="text-slate-400">
-          Ứng dụng đếm lịch nghĩa vụ quân sự 2026 - 2028 · Lưu giữ tình yêu và chờ ngày anh về vinh quang.
+          Ứng dụng đếm lịch nghĩa vụ quân sự 2026 - 2028 · Lưu giữ tình yêu và chờ ngày anh về vinh
+          quang.
         </p>
         <div className="flex items-center justify-center gap-4 pt-1 text-slate-400">
           <button

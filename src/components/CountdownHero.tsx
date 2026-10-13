@@ -1,6 +1,17 @@
 import React, { useState, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { Heart, Sparkles, Calendar, Shield, MapPin, Smile, Send, Camera, Copy, Check } from 'lucide-react';
+import {
+  Heart,
+  Sparkles,
+  Calendar,
+  Shield,
+  MapPin,
+  Smile,
+  Send,
+  Camera,
+  Copy,
+  Check,
+} from 'lucide-react';
 import { CoupleData } from '../types';
 import { CountdownState } from '../utils/dateCalculations';
 import { playSweetChime } from '../utils/audio';
@@ -28,10 +39,12 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
   const girlfriendInputRef = useRef<HTMLInputElement | null>(null);
 
   const isImageAvatar = (avatar: string) =>
-    avatar && (avatar.startsWith('data:image') || avatar.startsWith('http') || avatar.includes('/'));
+    avatar &&
+    (avatar.startsWith('data:image') || avatar.startsWith('http') || avatar.includes('/'));
 
   const handleCopyCountdown = () => {
-    const shareText = `💖 Chờ Anh Về (2026 - 2028) 💕\n` +
+    const shareText =
+      `💖 Chờ Anh Về (2026 - 2028) 💕\n` +
       `Ông Chã Húi (${couple.boyfriendName}) & Bà Chã Thơm (${couple.girlfriendName})\n` +
       `⏳ Còn ${countdown.daysRemaining} ngày, ${countdown.hours} giờ, ${countdown.minutes} phút nữa là đến ngày xuất ngũ đón anh về (10/01/2028)!\n` +
       `🎖️ Đã hoàn thành ${countdown.progressPercent.toFixed(1)}% chặng đường tại ${couple.militaryUnit || 'Trường Cao đẳng Hậu cần 2, Thủ Đức'}.\n` +
@@ -43,7 +56,10 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
     setTimeout(() => setCopiedNotice(false), 2500);
   };
 
-  const handleUploadAvatar = async (target: 'boyfriend' | 'girlfriend', e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadAvatar = async (
+    target: 'boyfriend' | 'girlfriend',
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
@@ -98,7 +114,11 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
           >
             <div className="relative flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 overflow-hidden text-2xl shadow-xs border-2 border-emerald-200">
               {isImageAvatar(couple.boyfriendAvatar) ? (
-                <img src={couple.boyfriendAvatar} alt="Boyfriend" className="w-full h-full object-cover" />
+                <img
+                  src={couple.boyfriendAvatar}
+                  alt="Boyfriend"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 couple.boyfriendAvatar || '👨‍✈️'
               )}
@@ -124,7 +144,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
             </div>
             <h2 className="text-xl font-bold text-slate-800">{couple.boyfriendName}</h2>
             <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
-              <span className="font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">Sinh: 06/09/2003</span>
+              <span className="font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded">
+                Sinh: 06/09/2003
+              </span>
               <span className="text-slate-300">·</span>
               <MapPin className="w-3 h-3 text-rose-500" />
               <span>{couple.militaryUnit || 'Trường Cao đẳng Hậu cần 2, Thủ Đức'}</span>
@@ -138,7 +160,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
             <span className="h-px w-8 sm:w-12 bg-rose-300/60" />
             <div className="relative group cursor-pointer" onClick={handleSendHug}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-rose-500 to-pink-500 flex items-center justify-center text-white shadow-md transform hover:scale-110 active:scale-95 transition">
-                <Heart className={`w-6 h-6 fill-white ${justHugged ? 'animate-ping' : 'animate-pulse'}`} />
+                <Heart
+                  className={`w-6 h-6 fill-white ${justHugged ? 'animate-ping' : 'animate-pulse'}`}
+                />
               </div>
             </div>
             <span className="h-px w-8 sm:w-12 bg-rose-300/60" />
@@ -157,7 +181,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
             </div>
             <h2 className="text-xl font-bold text-slate-800">{couple.girlfriendName}</h2>
             <div className="text-xs text-rose-500 font-medium mt-0.5 flex items-center justify-end gap-1">
-              <span className="font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded">Sinh: 07/04/2004</span>
+              <span className="font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded">
+                Sinh: 07/04/2004
+              </span>
               <span className="text-slate-300">·</span>
               <span>Đợi anh về 🌸</span>
             </div>
@@ -169,7 +195,11 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
           >
             <div className="relative flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 overflow-hidden text-2xl shadow-xs border-2 border-pink-200">
               {isImageAvatar(couple.girlfriendAvatar) ? (
-                <img src={couple.girlfriendAvatar} alt="Girlfriend" className="w-full h-full object-cover" />
+                <img
+                  src={couple.girlfriendAvatar}
+                  alt="Girlfriend"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 couple.girlfriendAvatar || '👧🌸'
               )}
@@ -198,8 +228,8 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
           {countdown.isBeforeStart
             ? 'Đếm ngược ngày anh chính thức lên đường nhập ngũ 2026'
             : countdown.isCompleted
-            ? '🎉 ANH ĐÃ XUẤT NGŨ HOÀN THÀNH NGHĨA VỤ QUÂN SỰ! 🎉'
-            : 'Đếm ngược ngày xuất ngũ 2028 - Đón anh về bên em 💍'}
+              ? '🎉 ANH ĐÃ XUẤT NGŨ HOÀN THÀNH NGHĨA VỤ QUÂN SỰ! 🎉'
+              : 'Đếm ngược ngày xuất ngũ 2028 - Đón anh về bên em 💍'}
         </div>
 
         {/* Numbers Grid */}
@@ -322,9 +352,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
             className="absolute top-0 transform -translate-x-1/2 transition-all duration-700 pointer-events-none flex flex-col items-center"
             style={{ left: `${Math.min(95, Math.max(5, countdown.progressPercent))}%` }}
           >
-            <span className="text-2xl filter drop-shadow-sm animate-bounce">
-              👨‍✈️
-            </span>
+            <span className="text-2xl filter drop-shadow-sm animate-bounce">👨‍✈️</span>
             <span className="text-[10px] font-bold text-white bg-emerald-700 px-1.5 py-0.2 rounded-full shadow-xs whitespace-nowrap">
               Anh đang đi
             </span>
@@ -332,9 +360,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
 
           {/* Goal Girlfriend Marker at 100% */}
           <div className="absolute top-0 right-0 transform translate-x-1/2 pointer-events-none flex flex-col items-center">
-            <span className="text-2xl filter drop-shadow-sm animate-pulse">
-              👰🌸
-            </span>
+            <span className="text-2xl filter drop-shadow-sm animate-pulse">👰🌸</span>
             <span className="text-[10px] font-bold text-white bg-rose-600 px-1.5 py-0.2 rounded-full shadow-xs whitespace-nowrap">
               Đón anh
             </span>
@@ -345,14 +371,18 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
         <div className="flex items-center justify-between text-xs text-slate-500 font-medium pt-3 border-t border-rose-100 mt-4">
           <div className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Nhập ngũ: <strong>{couple.militaryStartDate}</strong></span>
+            <span>
+              Nhập ngũ: <strong>{couple.militaryStartDate}</strong>
+            </span>
           </div>
           <div className="text-rose-600 font-semibold italic text-center hidden md:block">
             "{couple.sweetQuote}"
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5 text-rose-600" />
-            <span>Xuất ngũ: <strong>{couple.militaryEndDate}</strong></span>
+            <span>
+              Xuất ngũ: <strong>{couple.militaryEndDate}</strong>
+            </span>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { LoveLetter, MoodType } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
 import { compressImage } from '../utils/imageCompression';
 import { useConfirm } from '../hooks/useConfirm';
+import { newId } from '../utils/id';
 
 interface LoveLettersSectionProps {
   letters: LoveLetter[];
@@ -65,7 +66,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
     if (!title.trim() || !content.trim()) return;
 
     const newLetter: LoveLetter = {
-      id: `letter-${Date.now()}`,
+      id: newId('letter'),
       date: new Date().toISOString(),
       title: title.trim(),
       content: content.trim(),
@@ -97,7 +98,8 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Gom góp từng dòng tâm tư, nỗi nhớ và những câu chuyện nhỏ mỗi ngày chờ ngày anh về cùng đọc lại.
+            Gom góp từng dòng tâm tư, nỗi nhớ và những câu chuyện nhỏ mỗi ngày chờ ngày anh về cùng
+            đọc lại.
           </p>
         </div>
 
@@ -131,9 +133,12 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
           <div className="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
             💌
           </div>
-          <h3 className="text-base font-bold text-slate-700">Hộp Thư Riêng Tư Của Hai Bạn Đang Trống</h3>
+          <h3 className="text-base font-bold text-slate-700">
+            Hộp Thư Riêng Tư Của Hai Bạn Đang Trống
+          </h3>
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-            Các lá thư mẫu mặc định đã được dọn sạch để nhường chỗ cho những tâm tư riêng tư nhất. Bà Chã Thơm hãy bấm nút dưới đây để gửi lá thư đầu tiên cho Ông Chã Húi nhé!
+            Các lá thư mẫu mặc định đã được dọn sạch để nhường chỗ cho những tâm tư riêng tư nhất.
+            Bà Chã Thơm hãy bấm nút dưới đây để gửi lá thư đầu tiên cho Ông Chã Húi nhé!
           </p>
           <button
             onClick={() => {
@@ -167,7 +172,9 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 ${moodInfo.bg}`}>
+                    <span
+                      className={`text-xs px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 ${moodInfo.bg}`}
+                    >
                       <span>{moodInfo.icon}</span>
                       <span>{moodInfo.label}</span>
                     </span>
@@ -319,7 +326,11 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
                   </label>
                   {photoUrl && (
                     <div className="flex items-center gap-2">
-                      <img src={photoUrl} alt="Preview" className="w-9 h-9 rounded-lg object-cover border" />
+                      <img
+                        src={photoUrl}
+                        alt="Preview"
+                        className="w-9 h-9 rounded-lg object-cover border"
+                      />
                       <button
                         type="button"
                         onClick={() => setPhotoUrl('')}
@@ -391,7 +402,11 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
 
             {selectedLetter.photoUrl && (
               <div className="mt-4 rounded-2xl overflow-hidden border border-rose-200">
-                <img src={selectedLetter.photoUrl} alt="Kỷ niệm" className="w-full max-h-72 object-cover" />
+                <img
+                  src={selectedLetter.photoUrl}
+                  alt="Kỷ niệm"
+                  className="w-full max-h-72 object-cover"
+                />
               </div>
             )}
 

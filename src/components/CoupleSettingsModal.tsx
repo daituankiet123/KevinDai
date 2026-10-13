@@ -112,8 +112,14 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                 </label>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl overflow-hidden border border-emerald-300 shrink-0">
-                    {formData.boyfriendAvatar && (formData.boyfriendAvatar.startsWith('data:') || formData.boyfriendAvatar.startsWith('http')) ? (
-                      <img src={formData.boyfriendAvatar} alt="Boyfriend" className="w-full h-full object-cover" />
+                    {formData.boyfriendAvatar &&
+                    (formData.boyfriendAvatar.startsWith('data:') ||
+                      formData.boyfriendAvatar.startsWith('http')) ? (
+                      <img
+                        src={formData.boyfriendAvatar}
+                        alt="Boyfriend"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <span>{formData.boyfriendAvatar || '👨‍✈️'}</span>
                     )}
@@ -128,7 +134,10 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                         const file = e.target.files?.[0];
                         if (file) {
                           try {
-                            const avatar = await compressImage(file, { maxDimension: 512, quality: 0.85 });
+                            const avatar = await compressImage(file, {
+                              maxDimension: 512,
+                              quality: 0.85,
+                            });
                             setFormData({ ...formData, boyfriendAvatar: avatar });
                           } catch {
                             alert('Không thể tải ảnh, vui lòng thử lại.');
@@ -199,8 +208,14 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
               </label>
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center text-xl overflow-hidden border border-pink-300 shrink-0">
-                  {formData.girlfriendAvatar && (formData.girlfriendAvatar.startsWith('data:') || formData.girlfriendAvatar.startsWith('http')) ? (
-                    <img src={formData.girlfriendAvatar} alt="Girlfriend" className="w-full h-full object-cover" />
+                  {formData.girlfriendAvatar &&
+                  (formData.girlfriendAvatar.startsWith('data:') ||
+                    formData.girlfriendAvatar.startsWith('http')) ? (
+                    <img
+                      src={formData.girlfriendAvatar}
+                      alt="Girlfriend"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     <span>{formData.girlfriendAvatar || '👧🌸'}</span>
                   )}
@@ -208,22 +223,25 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                 <label className="cursor-pointer px-3 py-1.5 rounded-xl border border-pink-300 bg-white hover:bg-pink-50 text-rose-800 text-xs font-bold transition flex items-center gap-1">
                   <Camera className="w-3.5 h-3.5 text-rose-600" />
                   <span>Tải ảnh từ máy</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            const avatar = await compressImage(file, { maxDimension: 512, quality: 0.85 });
-                            setFormData({ ...formData, girlfriendAvatar: avatar });
-                          } catch {
-                            alert('Không thể tải ảnh, vui lòng thử lại.');
-                          }
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        try {
+                          const avatar = await compressImage(file, {
+                            maxDimension: 512,
+                            quality: 0.85,
+                          });
+                          setFormData({ ...formData, girlfriendAvatar: avatar });
+                        } catch {
+                          alert('Không thể tải ảnh, vui lòng thử lại.');
                         }
-                      }}
-                      className="hidden"
-                    />
+                      }
+                    }}
+                    className="hidden"
+                  />
                 </label>
                 <div className="flex items-center gap-1 overflow-x-auto">
                   {AVATAR_OPTIONS_GIRL.map((av) => (
@@ -255,8 +273,12 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
             <div className="space-y-2.5">
               <label className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-purple-100 cursor-pointer">
                 <div>
-                  <div className="font-bold text-slate-800 text-xs">Nhạc nền lãng mạn (Lofi Piano)</div>
-                  <div className="text-[11px] text-slate-400">Phát giai điệu du dương, ấm áp khi sử dụng ứng dụng</div>
+                  <div className="font-bold text-slate-800 text-xs">
+                    Nhạc nền lãng mạn (Lofi Piano)
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Phát giai điệu du dương, ấm áp khi sử dụng ứng dụng
+                  </div>
                 </div>
                 <input
                   type="checkbox"
@@ -277,7 +299,9 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                     max="1"
                     step="0.05"
                     value={formData.bgMusicVolume ?? 0.5}
-                    onChange={(e) => setFormData({ ...formData, bgMusicVolume: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, bgMusicVolume: parseFloat(e.target.value) })
+                    }
                     className="w-40 accent-rose-500 cursor-pointer"
                   />
                 </div>
@@ -298,7 +322,9 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                   <input
                     type="checkbox"
                     checked={formData.rainHeartsEnabled}
-                    onChange={(e) => setFormData({ ...formData, rainHeartsEnabled: e.target.checked })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, rainHeartsEnabled: e.target.checked })
+                    }
                     className="w-4 h-4 text-rose-600 rounded-sm focus:ring-rose-500 cursor-pointer"
                   />
                   <span className="font-bold text-slate-700 text-xs">Cơn mưa trái tim</span>
