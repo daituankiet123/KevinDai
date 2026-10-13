@@ -16,6 +16,7 @@ export const DEFAULT_COUPLE: CoupleData = {
   rainHeartsEnabled: true,
   bgMusicEnabled: false,
   bgMusicVolume: 0.5,
+  notificationsEnabled: false,
 };
 
 export const DEFAULT_ANNIVERSARIES: Anniversary[] = [
@@ -337,11 +338,13 @@ export function loadCoupleData(): CoupleData {
   }
 }
 
-export function saveCoupleData(data: CoupleData) {
+export function saveCoupleData(data: CoupleData): boolean {
   try {
     localStorage.setItem(STORAGE_KEYS.COUPLE, JSON.stringify(data));
+    return true;
   } catch (e) {
     console.error('Save couple data error:', e);
+    return false;
   }
 }
 
@@ -377,11 +380,13 @@ export function loadAnniversaries(): Anniversary[] {
   }
 }
 
-export function saveAnniversaries(data: Anniversary[]) {
+export function saveAnniversaries(data: Anniversary[]): boolean {
   try {
     localStorage.setItem(STORAGE_KEYS.ANNIVERSARIES, JSON.stringify(data));
+    return true;
   } catch (e) {
     console.error('Save anniversaries error:', e);
+    return false;
   }
 }
 
@@ -403,11 +408,13 @@ export function loadLetters(): LoveLetter[] {
   }
 }
 
-export function saveLetters(data: LoveLetter[]) {
+export function saveLetters(data: LoveLetter[]): boolean {
   try {
     localStorage.setItem(STORAGE_KEYS.LETTERS, JSON.stringify(data));
+    return true;
   } catch (e) {
     console.error('Save letters error:', e);
+    return false;
   }
 }
 
@@ -421,11 +428,13 @@ export function loadWishes(): WishItem[] {
   }
 }
 
-export function saveWishes(data: WishItem[]) {
+export function saveWishes(data: WishItem[]): boolean {
   try {
     localStorage.setItem(STORAGE_KEYS.WISHES, JSON.stringify(data));
+    return true;
   } catch (e) {
     console.error('Save wishes error:', e);
+    return false;
   }
 }
 
@@ -447,10 +456,12 @@ export function loadDailyNotes(): DailyNote[] {
   }
 }
 
-export function saveDailyNotes(data: DailyNote[]) {
+export function saveDailyNotes(data: DailyNote[]): boolean {
   try {
     localStorage.setItem(STORAGE_KEYS.DAILY_NOTES, JSON.stringify(data));
+    return true;
   } catch (e) {
     console.error('Save daily notes error:', e);
+    return false;
   }
 }

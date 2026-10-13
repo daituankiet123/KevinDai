@@ -6,7 +6,7 @@
 
 Đánh giá và cải tiến dự án "Chờ Anh Về" (app React đếm ngược nghĩa vụ quân sự 2026–2028 + nhật ký tình yêu) theo kế hoạch nhiều giai đoạn đã thống nhất.
 
-Hiện đã hoàn thành **Giai đoạn 4 (chất lượng & trải nghiệm)**. Toàn bộ 4 giai đoạn đều đã xong.
+Đã hoàn thành **Giai đoạn 1–5** và **đợt cải tiến tổng hợp** (ổn định dữ liệu, hiệu năng, UX, chất lượng code, vận hành).
 
 ## Thông tin dự án
 
@@ -72,8 +72,73 @@ Hiện đã hoàn thành **Giai đoạn 4 (chất lượng & trải nghiệm)**.
 |---|---|
 | `npx eslint .` | 0 errors, 0 warnings |
 | `npx tsc --noEmit` | pass |
-| `npm test` | 22/22 pass |
+| `npm test` | 36/36 pass |
 | `npm run build` | pass (dist + single-file + ZIP) |
+
+## Đợt cải tiến tổng hợp ✅
+
+Theo báo cáo kế hoạch 5 nhóm đã thống nhất (A–E). Dark mode (C3) được bỏ qua theo quyết định của user.
+
+### A — Ổn định dữ liệu
+- **Serialize ghi IndexedDB**: `queueSavePhotos()` trong `photoStorage.ts` nối tiếp các lần ghi, luôn persist ảnh mới nhất (tránh ghi chồng lỗi khi heart/fav/xóa liên tiếp). Store dùng `persistPhotos` gọi queue.
+- **Validate schema khi import**: `store.ts` thêm các guard `isCoupleData`/`isAnniversary`/`isLetter`/`isWish`/`isPhoto`/`isDailyNote`; `importData` trả `boolean` để App báo "Tập tin sao lưu không hợp lệ" khi file lỗi.
+- **Bắt lỗi quota localStorage**: các `save*` trong `storage.ts` trả `boolean`; store set `storageError` và App hiển thị toast cảnh báo (nút đóng qua `clearStorageError`).
+
+### B — Hiệu năng
+- **Gom selectors + `useShallow`**: `App.tsx` gom 7 data fields + 22 actions vào 2 `useShallow` selector (import từ `zustand/react/shallow`), giảm re-render không cần thiết.
+- **Cô lập đồng hồ**: tạo `hooks/useNow.ts` (tick interval) thay `useState`+`setInterval` trong App; App dùng `useNow()`.
+
+### C — UX / Tính năng
+- **Notification reminder kỷ niệm**: `utils/notifications.ts` (`requestNotificationPermission`, `sendNotification`) + `hooks/useAnniversaryNotifications.ts` (gửi 1 lần/ngày/kỷ niệm, lưu ledger localStorage). Toggle trong `CoupleSettingsModal`; cờ `notificationsEnabled` thêm vào `CoupleData`.
+- **Undo khi xóa**: store thêm `lastDeleted` + `undoDelete`/`clearLastDeleted`; các action `delete*` ghi item bị xóa; App hiển thị snackbar "Đã xóa — Hoàn tác" (auto-dismiss 6s).
+- ~~Dark mode~~ — bỏ qua (phạm vi quá rộng, giữ giao diện sáng hiện tại).
+
+### D — Chất lượng code
+- **E2E test Playwright**: thêm `@playwright/test`, `playwright.config.ts`, `e2e/app.spec.ts` (4 test), script `test:e2e`.
+- **Tách App.tsx**: tạo `components/DashboardTeasers.tsx` (3 teaser card Sự kiện/Album/Ước nguyện), App.tsx 654 → ~500 dòng.
+- **A11y**: thêm `aria-label="Đóng"` cho các nút ✕ modal + `aria-label` cho nút xóa/yêu thích còn thiếu.
+
+### E — Vận hành / Tooling
+- **Clean cross-platform**: `scripts/clean.js` (Node `fs.rmSync`) thay `rm -rf`; script `clean` đổi thành `node scripts/clean.js`.
+- **Fix PWA path**: `start_url`/`scope`/`id` đổi thành `./`, icon `src` bỏ leading slash (phù hợp `base: './'` khi deploy subpath); cập nhật `public/manifest.json` và regex inline trong `scripts/package.js`.
+
+### Trạng thái verify đợt cải tiến
+
+| Kiểm tra | Kết quả |
+|---|---|
+| `npx eslint .` | 0 errors, 0 warnings |
+| `npx tsc --noEmit` | pass |
+| `npm test` | 36/36 pass |
+| `npx playwright test` | 4/4 pass |
+| `npm run build` | pass (dist + single-file + ZIP) |
+
+## Đợt hỗ trợ chạy trên iPhone (PWA + IPA) ✅
+
+Theo yêu cầu "chạy được trên iPhone bằng file IPA". Chọn hướng chính là **PWA installable** (không cần IPA, chạy ngay qua Safari), đồng thời chuẩn bị **Capacitor + GitHub Actions macOS** để build IPA (sideload) khi cần.
+
+### PWA installable trên iOS
+- **Icon PNG cho iOS**: thêm `sharp` (devDependency) + `scripts/generate-icons.js` sinh `icon-180.png`, `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` từ `public/icon.svg`. iOS không nhận apple-touch-icon dạng SVG → phải là PNG.
+- **`index.html`**: thêm `viewport-fit=cover` + `maximum-scale=1` + `user-scalable=no`; `apple-mobile-web-app-status-bar-style=black-translucent`; `apple-touch-icon` trỏ `icon-180.png`; manifest/icon đổi sang đường dẫn relative (`./`) khớp `base: './'`.
+- **Manifest** (`vite.config.ts` + `public/manifest.json`): icon chuyển sang PNG (any 192/512 + maskable 512).
+
+### Capacitor → IPA
+- Thêm `@capacitor/core`, `@capacitor/cli`, `@capacitor/ios`; `capacitor.config.ts` (`appId: com.choanhve.app`, `webDir: dist`).
+- Scripts: `cap:sync`, `cap:add:ios`, `cap:open:ios`.
+- `.github/workflows/build-ios.yml`: build IPA **unsigned** (sideload qua AltStore/Sideloadly) trên `macos-latest`; có bước ký tùy chọn nếu cấu hình secrets (`BUILD_CERTIFICATE_BASE64`, `P12_PASSWORD`, `KEYCHAIN_PASSWORD`, `PROVISIONING_PROFILE_BASE64`).
+- `.gitignore`: thêm `ios/`, `android/`.
+
+### Lưu ý cài đặt
+- **PWA**: iPhone mở Safari → vào URL → Chia sẻ → "Thêm vào Màn hình chính". Chạy offline như app gốc.
+- **IPA**: file `.ipa` unsigned chỉ cài qua sideload (AltStore, Sideloadly, hoặc jailbreak); muốn cài trực tiếp cần tài khoản Apple Developer (99 USD/năm) để ký + đóng gói qua TestFlight/App Store.
+
+### Trạng thái verify đợt iPhone
+
+| Kiểm tra | Kết quả |
+|---|---|
+| `npx eslint .` | 0 errors, 0 warnings |
+| `npx tsc --noEmit` | pass |
+| `npm test` | 36/36 pass |
+| `npm run build` | pass (dist + single-file + ZIP, precache 17 entries) |
 
 ## File quan trọng
 
@@ -96,3 +161,13 @@ Hiện đã hoàn thành **Giai đoạn 4 (chất lượng & trải nghiệm)**.
 | `src/components/PhotoAddModal.tsx` / `PhotoCard.tsx` / `PhotoLightbox.tsx` | tách từ `PhotoAlbumSection` |
 | `src/components/DailyNotesFilter.tsx` / `DailyNoteListItem.tsx` | tách từ `DailyNotesSection` |
 | `src/store.test.ts` / `src/utils/id.test.ts` | 12 test store actions + id |
+| `src/hooks/useNow.ts` | hook tick đồng hồ (interval) |
+| `src/hooks/useAnniversaryNotifications.ts` | gửi notification kỷ niệm 1 lần/ngày |
+| `src/utils/notifications.ts` | requestPermission + sendNotification |
+| `src/components/DashboardTeasers.tsx` | 3 teaser card tách từ App.tsx |
+| `scripts/clean.js` | clean build artifacts cross-platform |
+| `playwright.config.ts` / `e2e/app.spec.ts` | E2E test Playwright |
+| `public/icon-*.png` | icon PWA (sinh từ `npm run generate:icons`, cần sharp) |
+| `scripts/generate-icons.js` | sinh icon PNG cho PWA/iOS từ icon.svg |
+| `capacitor.config.ts` | cấu hình Capacitor (`webDir: dist`) |
+| `.github/workflows/build-ios.yml` | build IPA unsigned trên macOS |

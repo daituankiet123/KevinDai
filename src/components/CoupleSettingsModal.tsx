@@ -3,6 +3,7 @@ import { Shield, User, Calendar, Volume2, Camera } from 'lucide-react';
 import { CoupleData } from '../types';
 import { playHeartPop } from '../utils/audio';
 import { compressImage } from '../utils/imageCompression';
+import { requestNotificationPermission } from '../utils/notifications';
 
 interface CoupleSettingsModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
       <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-rose-200 shadow-2xl relative max-h-[92vh] overflow-y-auto">
         <button
           onClick={onClose}
+          aria-label="Đóng"
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
         >
           ✕
@@ -330,6 +332,29 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                   <span className="font-bold text-slate-700 text-xs">Cơn mưa trái tim</span>
                 </label>
               </div>
+
+              <label className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-purple-100 cursor-pointer">
+                <div>
+                  <div className="font-bold text-slate-800 text-xs">
+                    Thông báo nhắc nhở kỷ niệm
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Gửi thông báo trình duyệt khi kỷ niệm sắp đến hoặc trong ngày
+                  </div>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={formData.notificationsEnabled ?? false}
+                  onChange={async (e) => {
+                    const checked = e.target.checked;
+                    if (checked) {
+                      await requestNotificationPermission();
+                    }
+                    setFormData({ ...formData, notificationsEnabled: checked });
+                  }}
+                  className="w-4 h-4 text-rose-600 rounded-sm focus:ring-rose-500 cursor-pointer"
+                />
+              </label>
             </div>
           </div>
 

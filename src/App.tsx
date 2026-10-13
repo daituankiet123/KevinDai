@@ -4,8 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Header } from './components/Header';
 import { CountdownHero } from './components/CountdownHero';
+import { DashboardTeasers } from './components/DashboardTeasers';
 import { AnniversariesSection } from './components/AnniversariesSection';
 import { MilestonesSection } from './components/MilestonesSection';
 import { LoveLettersSection } from './components/LoveLettersSection';
@@ -26,41 +28,81 @@ import { calculateMilitaryCountdown, getAnniversaryStatus } from './utils/dateCa
 import { CoupleData, DailyNote } from './types';
 import { startRomanticMusic, stopRomanticMusic, setRomanticMusicVolume } from './utils/audio';
 import { todayStr } from './utils/dateUtils';
+import { useNow } from './hooks/useNow';
+import { useAnniversaryNotifications } from './hooks/useAnniversaryNotifications';
 
 export default function App() {
-  const couple = useAppStore((s) => s.couple);
-  const anniversaries = useAppStore((s) => s.anniversaries);
-  const letters = useAppStore((s) => s.letters);
-  const wishes = useAppStore((s) => s.wishes);
-  const photos = useAppStore((s) => s.photos);
-  const dailyNotes = useAppStore((s) => s.dailyNotes);
-  const updateCouple = useAppStore((s) => s.updateCouple);
-  const importData = useAppStore((s) => s.importData);
-  const addAnniversary = useAppStore((s) => s.addAnniversary);
-  const deleteAnniversary = useAppStore((s) => s.deleteAnniversary);
-  const addLetter = useAppStore((s) => s.addLetter);
-  const deleteLetter = useAppStore((s) => s.deleteLetter);
-  const toggleFavoriteLetter = useAppStore((s) => s.toggleFavoriteLetter);
-  const addWish = useAppStore((s) => s.addWish);
-  const toggleWish = useAppStore((s) => s.toggleWish);
-  const heartWish = useAppStore((s) => s.heartWish);
-  const deleteWish = useAppStore((s) => s.deleteWish);
-  const addPhoto = useAppStore((s) => s.addPhoto);
-  const deletePhoto = useAppStore((s) => s.deletePhoto);
-  const toggleFavoritePhoto = useAppStore((s) => s.toggleFavoritePhoto);
-  const heartPhoto = useAppStore((s) => s.heartPhoto);
-  const editPhotoCaption = useAppStore((s) => s.editPhotoCaption);
-  const addOrUpdateNote = useAppStore((s) => s.addOrUpdateNote);
-  const deleteNote = useAppStore((s) => s.deleteNote);
-  const heartNote = useAppStore((s) => s.heartNote);
-  const hydratePhotos = useAppStore((s) => s.hydratePhotos);
+  const { couple, anniversaries, letters, wishes, photos, dailyNotes, storageError, lastDeleted } =
+    useAppStore(
+      useShallow((s) => ({
+        couple: s.couple,
+        anniversaries: s.anniversaries,
+        letters: s.letters,
+        wishes: s.wishes,
+        photos: s.photos,
+        dailyNotes: s.dailyNotes,
+        storageError: s.storageError,
+        lastDeleted: s.lastDeleted,
+      }))
+    );
+  const {
+    updateCouple,
+    importData,
+    addAnniversary,
+    deleteAnniversary,
+    addLetter,
+    deleteLetter,
+    toggleFavoriteLetter,
+    addWish,
+    toggleWish,
+    heartWish,
+    deleteWish,
+    addPhoto,
+    deletePhoto,
+    toggleFavoritePhoto,
+    heartPhoto,
+    editPhotoCaption,
+    addOrUpdateNote,
+    deleteNote,
+    heartNote,
+    hydratePhotos,
+    clearStorageError,
+    undoDelete,
+    clearLastDeleted,
+  } = useAppStore(
+    useShallow((s) => ({
+      updateCouple: s.updateCouple,
+      importData: s.importData,
+      addAnniversary: s.addAnniversary,
+      deleteAnniversary: s.deleteAnniversary,
+      addLetter: s.addLetter,
+      deleteLetter: s.deleteLetter,
+      toggleFavoriteLetter: s.toggleFavoriteLetter,
+      addWish: s.addWish,
+      toggleWish: s.toggleWish,
+      heartWish: s.heartWish,
+      deleteWish: s.deleteWish,
+      addPhoto: s.addPhoto,
+      deletePhoto: s.deletePhoto,
+      toggleFavoritePhoto: s.toggleFavoritePhoto,
+      heartPhoto: s.heartPhoto,
+      editPhotoCaption: s.editPhotoCaption,
+      addOrUpdateNote: s.addOrUpdateNote,
+      deleteNote: s.deleteNote,
+      heartNote: s.heartNote,
+      hydratePhotos: s.hydratePhotos,
+      clearStorageError: s.clearStorageError,
+      undoDelete: s.undoDelete,
+      clearLastDeleted: s.clearLastDeleted,
+    }))
+  );
 
   const [activeTab, setActiveTab] = useState('countdown');
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<DailyNote | null>(null);
   const [targetNoteDate, setTargetNoteDate] = useState<string | undefined>(undefined);
   const [backupToast, setBackupToast] = useState<string | null>(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const currentTime = useNow();
   const [isMusicPlaying, setIsMusicPlaying] = useState<boolean>(false);
 
   const [isExeModalOpen, setIsExeModalOpen] = useState(false);
@@ -83,13 +125,15 @@ export default function App() {
     hydratePhotos();
   }, [hydratePhotos]);
 
-  // Live timer interval (every second)
+  // Send browser notifications for upcoming/today anniversaries
+  useAnniversaryNotifications(anniversaries, couple.notificationsEnabled ?? false);
+
+  // Auto-dismiss the undo snackbar after a few seconds
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+    if (!lastDeleted) return;
+    const timer = setTimeout(() => clearLastDeleted(), 6000);
+    return () => clearTimeout(timer);
+  }, [lastDeleted, clearLastDeleted]);
 
   // Update music volume when changed in settings
   useEffect(() => {
@@ -188,8 +232,10 @@ export default function App() {
       reader.onload = (event) => {
         try {
           const parsed = JSON.parse(event.target?.result as string);
-          importData(parsed);
-          setBackupToast('Khôi phục dữ liệu sao lưu thành công! 💕');
+          const ok = importData(parsed);
+          setBackupToast(
+            ok ? 'Khôi phục dữ liệu sao lưu thành công! 💕' : 'Tập tin sao lưu không hợp lệ.'
+          );
           setTimeout(() => setBackupToast(null), 3500);
         } catch {
           setBackupToast('Tập tin sao lưu không hợp lệ.');
@@ -263,154 +309,13 @@ export default function App() {
             />
 
             {/* Quick Teaser of Milestones & Anniversaries in main view */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white/80 backdrop-blur-xs rounded-3xl p-6 border border-rose-200/80 shadow-xs flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🔔</span>
-                      <h3 className="font-bold text-slate-800 text-base">Sự Kiện &amp; Kỷ Niệm</h3>
-                    </div>
-                    <button
-                      onClick={() => setActiveTab('anniversaries')}
-                      className="text-xs font-bold text-rose-600 hover:underline"
-                    >
-                      Xem tất cả →
-                    </button>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    {anniversaries.slice(0, 3).map((a) => {
-                      const status = getAnniversaryStatus(a, currentTime);
-                      return (
-                        <div
-                          key={a.id}
-                          className="flex items-center justify-between p-2.5 rounded-2xl bg-rose-50/50 border border-rose-100 text-xs"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-base">{a.icon || '💖'}</span>
-                            <div className="truncate max-w-[130px]">
-                              <div className="font-bold text-slate-800 truncate">{a.title}</div>
-                              <div className="text-[10px] text-slate-400">
-                                {status.formattedDate}
-                              </div>
-                            </div>
-                          </div>
-                          <span className="font-bold text-rose-600 bg-white px-2 py-0.5 rounded-lg border border-rose-100 shrink-0 text-[11px]">
-                            {status.isToday ? 'Hôm nay!' : `Còn ${status.daysRemaining} ngày`}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-rose-100 flex items-center justify-between text-xs text-slate-500">
-                  <span>Nhắc nhở tự động</span>
-                  <button
-                    onClick={() => setActiveTab('anniversaries')}
-                    className="font-bold text-rose-600 hover:text-rose-700"
-                  >
-                    + Thêm kỷ niệm
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Teaser of Photo Album */}
-              <div className="bg-white/80 backdrop-blur-xs rounded-3xl p-6 border border-rose-200/80 shadow-xs flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">📸</span>
-                      <h3 className="font-bold text-slate-800 text-base">Album Kỷ Niệm</h3>
-                    </div>
-                    <button
-                      onClick={() => setActiveTab('album')}
-                      className="text-xs font-bold text-rose-600 hover:underline"
-                    >
-                      Mở album ({photos.length}) →
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    {photos.slice(0, 3).map((p) => (
-                      <div
-                        key={p.id}
-                        onClick={() => setActiveTab('album')}
-                        className="aspect-square rounded-xl overflow-hidden border border-rose-200 bg-rose-50 cursor-pointer hover:scale-105 transition"
-                      >
-                        <img src={p.url} alt={p.caption} className="w-full h-full object-cover" />
-                      </div>
-                    ))}
-                  </div>
-
-                  <p className="text-xs text-slate-500 mt-3 line-clamp-2 italic font-script text-base">
-                    "{photos[0]?.caption || 'Khoảnh khắc yêu thương của hai đứa mình'}"
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-rose-100 flex items-center justify-between text-xs text-slate-500">
-                  <span>Ảnh đôi lưu trữ offline</span>
-                  <button
-                    onClick={() => setActiveTab('album')}
-                    className="font-bold text-rose-600 hover:text-rose-700"
-                  >
-                    + Tải thêm ảnh
-                  </button>
-                </div>
-              </div>
-
-              {/* Quick Teaser of Wishlist */}
-              <div className="bg-white/80 backdrop-blur-xs rounded-3xl p-6 border border-rose-200/80 shadow-xs flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">💫</span>
-                      <h3 className="font-bold text-slate-800 text-base">Ước Nguyện Khi Anh Về</h3>
-                    </div>
-                    <button
-                      onClick={() => setActiveTab('wishes')}
-                      className="text-xs font-bold text-rose-600 hover:underline"
-                    >
-                      Xem tất cả ({wishes.length}) →
-                    </button>
-                  </div>
-
-                  <div className="space-y-2.5">
-                    {wishes.slice(0, 3).map((w) => (
-                      <div
-                        key={w.id}
-                        className="flex items-center justify-between p-2.5 rounded-2xl bg-pink-50/40 border border-pink-100 text-xs"
-                      >
-                        <div className="flex items-center gap-2 truncate">
-                          <span className="text-sm shrink-0">{w.completed ? '✅' : '🌸'}</span>
-                          <span
-                            className={`font-semibold truncate ${
-                              w.completed ? 'line-through text-slate-400' : 'text-slate-800'
-                            }`}
-                          >
-                            {w.title}
-                          </span>
-                        </div>
-                        <span className="text-rose-600 font-bold flex items-center gap-1 shrink-0 ml-1 text-xs">
-                          ❤️ {w.hearts}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-rose-100 flex items-center justify-between text-xs text-slate-500">
-                  <span>Lên danh sách đón chàng lính</span>
-                  <button
-                    onClick={() => setActiveTab('wishes')}
-                    className="font-bold text-rose-600 hover:text-rose-700"
-                  >
-                    + Thêm điều ước
-                  </button>
-                </div>
-              </div>
-            </div>
+            <DashboardTeasers
+              anniversaries={anniversaries}
+              wishes={wishes}
+              photos={photos}
+              now={currentTime}
+              onNavigate={setActiveTab}
+            />
           </div>
         )}
 
@@ -552,6 +457,41 @@ export default function App() {
         girlfriendName={couple.girlfriendNickname || couple.girlfriendName}
         soundEnabled={couple.soundEnabled}
       />
+
+      {/* Storage Error Toast */}
+      {storageError && (
+        <div className="fixed bottom-6 right-6 z-50 px-4 py-3 bg-rose-600 text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 border border-rose-500 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <span>⚠️</span>
+          <span>{storageError}</span>
+          <button
+            onClick={clearStorageError}
+            aria-label="Đóng thông báo lỗi"
+            className="ml-1 hover:opacity-70"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Undo Delete Snackbar */}
+      {lastDeleted && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-3 bg-slate-900 text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <span>Đã xóa.</span>
+          <button
+            onClick={undoDelete}
+            className="text-rose-300 hover:text-rose-200 underline font-extrabold"
+          >
+            Hoàn tác
+          </button>
+          <button
+            onClick={clearLastDeleted}
+            aria-label="Đóng thông báo hoàn tác"
+            className="text-slate-400 hover:text-white"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Backup Notification Toast */}
       {backupToast && (

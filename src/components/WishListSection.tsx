@@ -230,6 +230,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
+                aria-label="Đóng"
                 className="text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
               >
                 ✕

@@ -18,6 +18,9 @@ vi.mock('./utils/photoStorage', () => {
     savePhotosIndexedDB: async (photos: CouplePhoto[]) => {
       stored = photos;
     },
+    queueSavePhotos: (photos: CouplePhoto[]) => {
+      stored = photos;
+    },
   };
 });
 

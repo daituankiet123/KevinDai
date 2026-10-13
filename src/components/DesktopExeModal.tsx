@@ -43,6 +43,7 @@ export const DesktopExeModal: React.FC<DesktopExeModalProps> = ({
       <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full border border-rose-200 shadow-2xl relative max-h-[92vh] overflow-y-auto">
         <button
           onClick={onClose}
+          aria-label="Đóng"
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold p-1 rounded-full hover:bg-slate-100 transition"
         >
           ✕

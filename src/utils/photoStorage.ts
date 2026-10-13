@@ -34,6 +34,30 @@ export async function savePhotosIndexedDB(photos: CouplePhoto[]): Promise<void> 
   await set(IDB_KEY, photos);
 }
 
+// Serialize concurrent photo writes so rapid successive actions (heart, favorite,
+// delete) never persist a stale snapshot. Each call enqueues the latest array and
+// a trailing write coalesces intermediate updates.
+let pendingPhotos: CouplePhoto[] | null = null;
+let writeChain: Promise<void> = Promise.resolve();
+let writeScheduled = false;
+
+export function queueSavePhotos(photos: CouplePhoto[]): void {
+  pendingPhotos = photos;
+  if (writeScheduled) return;
+  writeScheduled = true;
+  writeChain = writeChain.then(async () => {
+    writeScheduled = false;
+    const snapshot = pendingPhotos;
+    if (!snapshot) return;
+    pendingPhotos = null;
+    try {
+      await savePhotosIndexedDB(snapshot);
+    } catch (e) {
+      console.error('Không thể lưu ảnh vào IndexedDB:', e);
+    }
+  });
+}
+
 export async function clearPhotosIndexedDB(): Promise<void> {
   try {
     await del(IDB_KEY);

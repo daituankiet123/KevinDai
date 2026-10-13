@@ -14,6 +14,7 @@ export interface CoupleData {
   rainHeartsEnabled: boolean;
   bgMusicEnabled?: boolean;
   bgMusicVolume?: number; // 0 to 1
+  notificationsEnabled?: boolean;
 }
 
 export interface CouplePhoto {

@@ -94,6 +94,7 @@ export const PhotoAddModal: React.FC<PhotoAddModalProps> = ({
           </div>
           <button
             onClick={onClose}
+            aria-label="Đóng"
             className="text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
           >
             ✕

@@ -209,6 +209,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
                   <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => onToggleFavorite(letter.id)}
+                      aria-label={letter.isFavorite ? 'Bỏ yêu thích bức thư' : 'Yêu thích bức thư'}
                       className={`p-1 rounded-md transition ${
                         letter.isFavorite ? 'text-amber-500' : 'text-slate-300 hover:text-amber-400'
                       }`}
@@ -250,6 +251,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
               </div>
               <button
                 onClick={() => setShowWriteModal(false)}
+                aria-label="Đóng"
                 className="text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
               >
                 ✕
@@ -372,6 +374,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
                 setSelectedLetter(null);
                 setRandomModal(false);
               }}
+              aria-label="Đóng"
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold p-1"
             >
               ✕

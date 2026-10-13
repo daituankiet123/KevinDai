@@ -44,6 +44,7 @@ async function buildPackage() {
   const manifestCandidate = path.resolve(publicDir, 'manifest.json');
 
   let iconDataUri = '';
+  let appleIconDataUri = '';
   let manifestDataUri = '';
 
   if (fs.existsSync(iconCandidate)) {
@@ -51,10 +52,23 @@ async function buildPackage() {
     iconDataUri = `data:image/svg+xml;base64,${iconBuffer.toString('base64')}`;
   }
 
+  // iOS requires a PNG apple-touch-icon; inline the 180px PNG for single-file builds.
+  const appleIconCandidate = path.resolve(publicDir, 'icon-180.png');
+  if (fs.existsSync(appleIconCandidate)) {
+    const appleBuffer = fs.readFileSync(appleIconCandidate);
+    appleIconDataUri = `data:image/png;base64,${appleBuffer.toString('base64')}`;
+  }
+
   if (fs.existsSync(manifestCandidate)) {
     let manifestText = fs.readFileSync(manifestCandidate, 'utf-8');
-    if (iconDataUri) {
-      manifestText = manifestText.replace(/"\/icon\.svg"/g, `"${iconDataUri}"`);
+    // Inline PNG icons referenced by the manifest into data URIs.
+    for (const iconName of ['icon-192.png', 'icon-512.png', 'icon-maskable-512.png']) {
+      const iconPath = path.resolve(publicDir, iconName);
+      if (fs.existsSync(iconPath)) {
+        const iconBuffer = fs.readFileSync(iconPath);
+        const iconUri = `data:image/png;base64,${iconBuffer.toString('base64')}`;
+        manifestText = manifestText.replace(new RegExp(`"?${iconName}"?`, 'g'), `"${iconUri}"`);
+      }
     }
     manifestDataUri = `data:application/manifest+json;base64,${Buffer.from(manifestText).toString('base64')}`;
   }
@@ -79,9 +93,11 @@ async function buildPackage() {
       /<link rel="icon"[^>]*>/i,
       `<link rel="icon" type="image/svg+xml" href="${iconDataUri}" />`
     );
+  }
+  if (appleIconDataUri) {
     singleFileHtml = singleFileHtml.replace(
       /<link rel="apple-touch-icon"[^>]*>/i,
-      `<link rel="apple-touch-icon" href="${iconDataUri}" />`
+      `<link rel="apple-touch-icon" href="${appleIconDataUri}" />`
     );
   }
 
