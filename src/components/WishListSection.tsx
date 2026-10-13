@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, Plus, Heart, Sparkles, Trash2, ListChecks } from 'lucide-react';
+import { Check, Plus, Heart, Trash2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { WishItem } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';

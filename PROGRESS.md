@@ -6,14 +6,14 @@
 
 Đánh giá và cải tiến dự án "Chờ Anh Về" (app React đếm ngược nghĩa vụ quân sự 2026–2028 + nhật ký tình yêu) theo kế hoạch nhiều giai đoạn đã thống nhất.
 
-Hiện đang thực hiện **Giai đoạn 4 (chất lượng & trải nghiệm)**: ESLint/Prettier, thay `confirm()`/`alert()` native bằng ConfirmDialog, `useMemo`, accessibility, CI.
+Hiện đã hoàn thành **Giai đoạn 4 (chất lượng & trải nghiệm)**. Toàn bộ 4 giai đoạn đều đã xong.
 
 ## Thông tin dự án
 
 - Vị trí: `/workspaces/KevinDai`
 - Stack: React 19 + Vite 8 + Tailwind 4, TypeScript ~5.7.3, tiếng Việt
 - Build 3 dạng: `dist`, single-file HTML, ZIP portable + Electron wrapper
-- Package manager: **npm** (`bun.lock` cũ trong repo chưa xóa — cần quyết định đồng bộ lock file về sau)
+- Package manager: **npm** (đã xóa `bun.lock` cũ, chỉ giữ `package-lock.json`)
 
 ## Các quyết định đã chốt với user
 
@@ -43,7 +43,7 @@ Hiện đang thực hiện **Giai đoạn 4 (chất lượng & trải nghiệm)*
 - **22 unit tests pass** (`dateCalculations.test.ts` 14, `dateUtils.test.ts` 4, `storage.test.ts` 4)
 - Thêm `vitest.config.ts` + scripts `test` / `test:watch`
 
-## Giai đoạn 4 — Chất lượng & trải nghiệm 🔶 (đang làm)
+## Giai đoạn 4 — Chất lượng & trải nghiệm ✅
 
 - `eslint.config.js` (flat config: `@typescript-eslint/parser` + react-hooks + react-refresh + prettier, node globals cho `.cjs`/`scripts/*.js`, `no-undef: 'off'` cho TS)
 - `.prettierrc.json`, `.prettierignore`
@@ -51,24 +51,20 @@ Hiện đang thực hiện **Giai đoạn 4 (chất lượng & trải nghiệm)*
 - Fix react-hooks error: refactor `DailyNoteModal.tsx` thành wrapper + `DailyNoteForm` với `key={initialNote?.id ?? targetDate ?? 'new'}`, bỏ useEffect sync state
 - Tạo `src/components/ConfirmDialog.tsx` + `src/hooks/useConfirm.tsx` (Promise-based) — thay `confirm()` native ở: WishListSection, PhotoAlbumSection, LoveLettersSection, AnniversariesSection, DailyNotesSection, TodayDailyNoteCard (kèm render `{ConfirmDialogElement}` cuối JSX + `aria-label="Xóa ..."`)
 - `AnniversariesSection`: thêm `useMemo` cho `statuses` + `now`
-- Cleanup unused imports hoàn tất: CountdownHero, CoupleSettingsModal, DailyLoveNote, DailyNoteModal, DailyNotesSection, DesktopCornerWidget, DesktopExeModal, Header, LoveFireworksModal, LoveLettersSection, MilestonesSection (xóa prop `couple` khỏi destructuring, giữ type import), PhotoAlbumSection (xóa `Eye`, `Layers`, `favoriteCount`), TodayDailyNoteCard (xóa `Sparkles`, `MessageCircle`, bỏ prop `onAddOrUpdateNote` khỏi destructuring)
+- Cleanup unused imports hoàn tất: CountdownHero, CoupleSettingsModal, DailyLoveNote, DailyNoteModal, DailyNotesSection, DesktopCornerWidget, DesktopExeModal, Header, LoveFireworksModal, LoveLettersSection, MilestonesSection (xóa prop `couple` khỏi destructuring, giữ type import), PhotoAlbumSection (xóa `Eye`, `Layers`, `favoriteCount`), TodayDailyNoteCard (xóa `Sparkles`, `MessageCircle`, bỏ prop `onAddOrUpdateNote` khỏi destructuring + interface), WishListSection (`Sparkles`, `ListChecks`), `vite.config.ts` (`path`)
+- Fix warning `react-hooks/exhaustive-deps` ở `LoveFireworksModal`: bọc `triggerConfettiCannons` trong `useCallback`
+- Xóa `bun.lock` (chỉ giữ `package-lock.json`)
+- `.gitignore`: thêm `dist-singlefile/`, `public/*.zip`, `public/*.html` (build artifacts được sinh lại khi build); untrack các artifacts đã bị git track
+- Thêm GitHub Actions CI `.github/workflows/ci.yml` (lint + typecheck + test + build, node 20, npm ci)
 
-### Trạng thái verify gần nhất
+### Trạng thái verify cuối
 
 | Kiểm tra | Kết quả |
 |---|---|
-| `npx eslint .` | 0 errors (trước khi cleanup lần cuối) |
-| `npx tsc --noEmit` | pass (trước khi cleanup lần cuối) |
+| `npx eslint .` | 0 errors, 0 warnings |
+| `npx tsc --noEmit` | pass |
 | `npm test` | 22/22 pass |
-| `npm run build` | pass |
-
-## Việc còn lại (Next steps)
-
-1. **Verify full sau cleanup lần cuối**: `npx tsc --noEmit`, `npx eslint .` (0 errors + giảm warnings), `npm test`, `npm run build`
-2. Dọn nốt `onAddOrUpdateNote` khỏi interface props của `TodayDailyNoteCard` + chỗ gọi trong `App.tsx` (nếu muốn sạch hoàn toàn)
-3. Tạo **GitHub Actions CI** (`.github/workflows/ci.yml`: lint + typecheck + test + build)
-4. Quyết định đồng bộ lock file (xóa `bun.lock` cũ, chỉ giữ `package-lock.json`)
-5. Xử lý build artifacts bị git track (`public/*.zip`, `public/*.html`, `dist-singlefile/*`) — cân nhắc `.gitignore`
+| `npm run build` | pass (dist + single-file + ZIP) |
 
 ## File quan trọng
 
@@ -81,9 +77,9 @@ Hiện đang thực hiện **Giai đoạn 4 (chất lượng & trải nghiệm)*
 | `src/utils/imageCompression.ts`, `src/utils/photoStorage.ts` | nén ảnh + IndexedDB |
 | `src/components/ConfirmDialog.tsx`, `src/hooks/useConfirm.tsx` | replacement cho `confirm()` native (6 component) |
 | `src/components/DailyNoteModal.tsx` | wrapper + `DailyNoteForm` (key-based remount) |
-| `src/components/TodayDailyNoteCard.tsx` | vừa bỏ prop `onAddOrUpdateNote` khỏi destructuring |
+| `src/components/TodayDailyNoteCard.tsx` | đã bỏ prop `onAddOrUpdateNote` khỏi destructuring + interface |
 | `src/App.tsx` | đã refactor dùng Zustand selectors |
 | `eslint.config.js`, `.prettierrc.json`, `.prettierignore`, `vitest.config.ts` | tooling configs |
 | `src/utils/*.test.ts` | 22 tests đang pass |
 | `electron.cjs`, `metadata.json`, `.env.example` | đã sửa (security, bỏ Gemini) |
-| `bun.lock` / `package-lock.json` | cần đồng bộ lock file |
+| `.github/workflows/ci.yml` | CI (lint + typecheck + test + build) |

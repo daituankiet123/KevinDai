@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { Sparkles, Heart, X, Award } from 'lucide-react';
 import { playCelebrationFanfare } from '../utils/audio';
@@ -32,7 +32,7 @@ export const LoveFireworksModal: React.FC<LoveFireworksModalProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Trigger continuous fireworks cannon bursts
-  const triggerConfettiCannons = () => {
+  const triggerConfettiCannons = useCallback(() => {
     playCelebrationFanfare(soundEnabled);
 
     // Left cannon
@@ -63,7 +63,7 @@ export const LoveFireworksModal: React.FC<LoveFireworksModalProps> = ({
         scalar: 1.2,
       });
     }, 400);
-  };
+  }, [soundEnabled]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -159,7 +159,7 @@ export const LoveFireworksModal: React.FC<LoveFireworksModalProps> = ({
       clearInterval(interval);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isOpen, soundEnabled]);
+  }, [isOpen, soundEnabled, triggerConfettiCannons]);
 
   if (!isOpen || !milestone) return null;
 

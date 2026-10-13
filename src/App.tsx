@@ -245,7 +245,6 @@ export default function App() {
             <TodayDailyNoteCard
               notes={dailyNotes}
               couple={couple}
-              onAddOrUpdateNote={addOrUpdateNote}
               onDeleteNote={deleteNote}
               onHeartNote={heartNote}
               onOpenModal={handleOpenNoteModal}

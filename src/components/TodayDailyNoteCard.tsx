@@ -21,7 +21,6 @@ import { useConfirm } from '../hooks/useConfirm';
 interface TodayDailyNoteCardProps {
   notes: DailyNote[];
   couple: CoupleData;
-  onAddOrUpdateNote: (note: DailyNote) => void;
   onDeleteNote: (id: string) => void;
   onHeartNote: (id: string) => void;
   onOpenModal: (note?: DailyNote | null, date?: string) => void;
