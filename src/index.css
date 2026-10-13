@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+.font-script {
+  font-family: 'Dancing Script', cursive;
+}
+
+.font-cute {
+  font-family: 'Pacifico', cursive;
+}
+
+/* Continuously floating background hearts */
+@keyframes floatHeartContinuous {
+  0% {
+    transform: translateY(0) scale(0.7) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-115vh) scale(1.15) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes heartBeatGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 16px 4px rgba(244, 63, 94, 0.25);
+  }
+}
+
+@keyframes shimmerEffect {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-pulse-slow {
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
+.animate-heart-glow {
+  animation: heartBeatGlow 2.5s ease-in-out infinite;
+}
+
+.floating-heart {
+  position: fixed;
+  bottom: -40px;
+  pointer-events: none;
+  animation: floatHeartContinuous linear infinite;
+  z-index: 10;
+  will-change: transform, opacity;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(254, 205, 211, 0.7);
+}
+
+/* Custom romantic scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #ffe4e6;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb {
+  background: #fda4af;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #fb7185;
+}

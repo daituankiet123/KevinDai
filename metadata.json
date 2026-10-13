@@ -1,0 +1,7 @@
+{
+  "name": "Đếm Ngày Chờ Anh - Nghĩa Vụ Quân Sự 2026 - 2028",
+  "description": "Ứng dụng đếm ngược nghĩa vụ quân sự 2026-2028 và nhật ký tình yêu ngọt ngào dành cho hậu phương bạn gái với nhiều trái tim, nhắc nhở kỷ niệm và hỗ trợ desktop.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
