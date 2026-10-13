@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import confetti from 'canvas-confetti';
-import { Calendar, Plus, Bell, BellRing, Heart, Trash2, CheckCircle2, Clock, Sparkles, CalendarPlus } from 'lucide-react';
+import { Calendar, Plus, Bell, BellRing, Trash2, CheckCircle2, Sparkles, CalendarPlus } from 'lucide-react';
 import { Anniversary, AnniversaryCategory } from '../types';
 import { getAnniversaryStatus, AnniversaryStatus } from '../utils/dateCalculations';
 import { playBellNotification, playHeartPop, playSweetChime } from '../utils/audio';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface AnniversariesSectionProps {
   anniversaries: Anniversary[];
@@ -42,9 +43,13 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
   const [newReminderDays, setNewReminderDays] = useState(3);
   const [newNotes, setNewNotes] = useState('');
   const [newIcon, setNewIcon] = useState('💖');
+  const { confirm, ConfirmDialogElement } = useConfirm();
 
-  const now = new Date();
-  const statuses: AnniversaryStatus[] = anniversaries.map((a) => getAnniversaryStatus(a, now));
+  const now = useMemo(() => new Date(), []);
+  const statuses: AnniversaryStatus[] = useMemo(
+    () => anniversaries.map((a) => getAnniversaryStatus(a, now)),
+    [anniversaries, now]
+  );
 
   // Sort: Today first, then soonest upcoming
   statuses.sort((a, b) => {
@@ -349,8 +354,14 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
                     <Sparkles className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => {
-                      if (confirm(`Bạn có chắc muốn xóa ngày kỷ niệm "${anniversary.title}" không?`)) {
+                    aria-label="Xóa ngày kỷ niệm"
+                    onClick={async () => {
+                      const ok = await confirm({
+                        title: 'Xóa ngày kỷ niệm',
+                        message: `Bạn có chắc muốn xóa ngày kỷ niệm "${anniversary.title}" không?`,
+                        confirmLabel: 'Xóa',
+                      });
+                      if (ok) {
                         onDeleteAnniversary(anniversary.id);
                       }
                     }}
@@ -510,6 +521,8 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
           </div>
         </div>
       )}
+
+      {ConfirmDialogElement}
     </div>
   );
 };

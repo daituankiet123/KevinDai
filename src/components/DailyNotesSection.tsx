@@ -3,27 +3,25 @@ import {
   Calendar,
   Plus,
   Search,
-  Filter,
   Heart,
   Edit3,
   Trash2,
   Tag,
   Clock,
   Sparkles,
-  BookOpen,
-  Share2,
   Copy,
   Check,
-  Smile,
-  MessageSquare,
   ArrowUpDown,
   RotateCcw,
   X,
   ChevronDown,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { DailyNote, DailyNoteMood, CoupleData } from '../types';
+import { DailyNote, CoupleData } from '../types';
 import { playHeartPop } from '../utils/audio';
+import { todayMonthStr } from '../utils/dateUtils';
+import { DAILY_NOTE_MOOD_META, CATEGORY_ICONS } from '../constants';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface DailyNotesSectionProps {
   notes: DailyNote[];
@@ -35,33 +33,11 @@ interface DailyNotesSectionProps {
   soundEnabled: boolean;
 }
 
-const MOOD_META: Record<string, { icon: string; label: string; badgeClass: string; cardBorder: string }> = {
-  love: { icon: '💖', label: 'Yêu thương', badgeClass: 'bg-rose-100 text-rose-700 border-rose-200', cardBorder: 'border-rose-200' },
-  miss: { icon: '🥺', label: 'Nhớ da diết', badgeClass: 'bg-indigo-100 text-indigo-700 border-indigo-200', cardBorder: 'border-indigo-200' },
-  happy: { icon: '🌸', label: 'Vui vẻ & Bình yên', badgeClass: 'bg-amber-100 text-amber-800 border-amber-200', cardBorder: 'border-amber-200' },
-  proud: { icon: '🎖️', label: 'Tự hào chàng lính', badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200', cardBorder: 'border-emerald-200' },
-  special: { icon: '📞', label: 'Cuộc gọi / Sự kiện', badgeClass: 'bg-sky-100 text-sky-800 border-sky-200', cardBorder: 'border-sky-200' },
-  excited: { icon: '🌟', label: 'Háo hức & Động lực', badgeClass: 'bg-yellow-100 text-yellow-800 border-yellow-200', cardBorder: 'border-yellow-200' },
-  tired: { icon: '🔋', label: 'Mệt nhưng cố gắng', badgeClass: 'bg-teal-100 text-teal-800 border-teal-200', cardBorder: 'border-teal-200' },
-};
-
-const CATEGORY_ICONS: Record<string, string> = {
-  'Cuộc gọi đơn vị': '📞',
-  'Thăm nuôi': '🍱',
-  'Thao trường': '🎖️',
-  'Gửi thư tay': '💌',
-  'Học Y tá Đại đội': '🩺',
-  'Kỷ niệm': '🥂',
-  'Lên đường nhập ngũ': '⭐',
-  'Tâm sự': '🌸',
-  'Động viên': '💪',
-  'Ngày bình yên': '☕',
-};
+const MOOD_META = DAILY_NOTE_MOOD_META;
 
 export const DailyNotesSection: React.FC<DailyNotesSectionProps> = ({
   notes,
   couple,
-  onAddOrUpdateNote,
   onDeleteNote,
   onHeartNote,
   onOpenModal,
@@ -79,6 +55,7 @@ export const DailyNotesSection: React.FC<DailyNotesSectionProps> = ({
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [copiedSummary, setCopiedSummary] = useState(false);
   const [isAdvancedDateOpen, setIsAdvancedDateOpen] = useState(false);
+  const { confirm, ConfirmDialogElement } = useConfirm();
 
   // Extract all unique categories/tags with counts
   const availableCategories = useMemo(() => {
@@ -136,7 +113,7 @@ export const DailyNotesSection: React.FC<DailyNotesSectionProps> = ({
 
       // 3. Time / Ngày tháng filter
       if (selectedTimeFilter === 'this_month') {
-        const nowYm = new Date().toISOString().slice(0, 7);
+        const nowYm = todayMonthStr();
         if (!note.date.startsWith(nowYm)) return false;
       } else if (selectedTimeFilter === 'year_2026') {
         if (!note.date.startsWith('2026')) return false;
@@ -857,8 +834,14 @@ export const DailyNotesSection: React.FC<DailyNotesSectionProps> = ({
                       <span>Sửa</span>
                     </button>
                     <button
-                      onClick={() => {
-                        if (window.confirm('Bạn có chắc muốn xóa ghi chú này không?')) {
+                      aria-label="Xóa ghi chú"
+                      onClick={async () => {
+                        const ok = await confirm({
+                          title: 'Xóa ghi chú',
+                          message: 'Bạn có chắc muốn xóa ghi chú này không?',
+                          confirmLabel: 'Xóa',
+                        });
+                        if (ok) {
                           onDeleteNote(note.id);
                         }
                       }}
@@ -929,6 +912,8 @@ export const DailyNotesSection: React.FC<DailyNotesSectionProps> = ({
           </div>
         </div>
       )}
+
+      {ConfirmDialogElement}
     </div>
   );
 };

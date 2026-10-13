@@ -21,32 +21,39 @@ import { CoupleSettingsModal } from './components/CoupleSettingsModal';
 import { LoveFireworksModal, MilestoneCelebrationData } from './components/LoveFireworksModal';
 import { DesktopCornerWidget } from './components/DesktopCornerWidget';
 
-import {
-  loadCoupleData,
-  saveCoupleData,
-  loadAnniversaries,
-  saveAnniversaries,
-  loadLetters,
-  saveLetters,
-  loadWishes,
-  saveWishes,
-  loadPhotos,
-  savePhotos,
-  loadDailyNotes,
-  saveDailyNotes,
-} from './utils/storage';
-
+import { useAppStore } from './store';
 import { calculateMilitaryCountdown, getAnniversaryStatus } from './utils/dateCalculations';
-import { CoupleData, Anniversary, LoveLetter, WishItem, CouplePhoto, DailyNote } from './types';
-import { playHeartPop, startRomanticMusic, stopRomanticMusic, setRomanticMusicVolume } from './utils/audio';
+import { CoupleData, DailyNote } from './types';
+import { startRomanticMusic, stopRomanticMusic, setRomanticMusicVolume } from './utils/audio';
+import { todayStr } from './utils/dateUtils';
 
 export default function App() {
-  const [couple, setCouple] = useState<CoupleData>(loadCoupleData);
-  const [anniversaries, setAnniversaries] = useState<Anniversary[]>(loadAnniversaries);
-  const [letters, setLetters] = useState<LoveLetter[]>(loadLetters);
-  const [wishes, setWishes] = useState<WishItem[]>(loadWishes);
-  const [photos, setPhotos] = useState<CouplePhoto[]>(loadPhotos);
-  const [dailyNotes, setDailyNotes] = useState<DailyNote[]>(loadDailyNotes);
+  const couple = useAppStore((s) => s.couple);
+  const anniversaries = useAppStore((s) => s.anniversaries);
+  const letters = useAppStore((s) => s.letters);
+  const wishes = useAppStore((s) => s.wishes);
+  const photos = useAppStore((s) => s.photos);
+  const dailyNotes = useAppStore((s) => s.dailyNotes);
+  const updateCouple = useAppStore((s) => s.updateCouple);
+  const importData = useAppStore((s) => s.importData);
+  const addAnniversary = useAppStore((s) => s.addAnniversary);
+  const deleteAnniversary = useAppStore((s) => s.deleteAnniversary);
+  const addLetter = useAppStore((s) => s.addLetter);
+  const deleteLetter = useAppStore((s) => s.deleteLetter);
+  const toggleFavoriteLetter = useAppStore((s) => s.toggleFavoriteLetter);
+  const addWish = useAppStore((s) => s.addWish);
+  const toggleWish = useAppStore((s) => s.toggleWish);
+  const heartWish = useAppStore((s) => s.heartWish);
+  const deleteWish = useAppStore((s) => s.deleteWish);
+  const addPhoto = useAppStore((s) => s.addPhoto);
+  const deletePhoto = useAppStore((s) => s.deletePhoto);
+  const toggleFavoritePhoto = useAppStore((s) => s.toggleFavoritePhoto);
+  const heartPhoto = useAppStore((s) => s.heartPhoto);
+  const editPhotoCaption = useAppStore((s) => s.editPhotoCaption);
+  const addOrUpdateNote = useAppStore((s) => s.addOrUpdateNote);
+  const deleteNote = useAppStore((s) => s.deleteNote);
+  const heartNote = useAppStore((s) => s.heartNote);
+  const hydratePhotos = useAppStore((s) => s.hydratePhotos);
 
   const [activeTab, setActiveTab] = useState('countdown');
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
@@ -69,6 +76,11 @@ export default function App() {
     localStorage.setItem('corner_widget_visible', String(isCornerWidgetVisible));
   }, [isCornerWidgetVisible]);
 
+  // Hydrate photos from IndexedDB on mount
+  useEffect(() => {
+    hydratePhotos();
+  }, [hydratePhotos]);
+
   // Live timer interval (every second)
   useEffect(() => {
     const timer = setInterval(() => {
@@ -88,13 +100,21 @@ export default function App() {
     if (isMusicPlaying) {
       stopRomanticMusic();
       setIsMusicPlaying(false);
-      handleUpdateCouple({ ...couple, bgMusicEnabled: false });
+      updateCouple({ ...couple, bgMusicEnabled: false });
     } else {
       startRomanticMusic(couple.bgMusicVolume ?? 0.5);
       setIsMusicPlaying(true);
-      handleUpdateCouple({ ...couple, bgMusicEnabled: true });
+      updateCouple({ ...couple, bgMusicEnabled: true });
     }
   };
+
+  // Calculate live countdown metrics
+  const countdown = calculateMilitaryCountdown(
+    couple.militaryStartDate,
+    couple.militaryEndDate,
+    couple.datingStartDate,
+    currentTime
+  );
 
   const handleTriggerFireworks = (milestoneData?: MilestoneCelebrationData) => {
     const data: MilestoneCelebrationData = milestoneData || {
@@ -102,7 +122,7 @@ export default function App() {
       timeframe: `${countdown.daysPassed}/${countdown.totalDays} ngày`,
       rank: 'Chiến sĩ kiên định ⭐',
       icon: '🎖️',
-      description: `Đã cùng nhau vượt qua ${countdown.daysPassed} ngày trên chặng đường 24 tháng rèn luyện tại ${couple.militaryUnit || 'Trung đoàn 88 - Sư đoàn 302'}.`,
+      description: `Đã cùng nhau vượt qua ${countdown.daysPassed} ngày trên chặng đường 24 tháng rèn luyện tại ${couple.militaryUnit || 'Trường Cao đẳng Hậu cần 2, Thủ Đức'}.`,
       girlfriendMessage: 'Bà Chã Thơm luôn là hậu phương ấm áp nhất, cùng Ông Chã Húi đếm từng ngày đón anh về 10/01/2028!',
     };
     setCelebratingMilestone(data);
@@ -111,17 +131,15 @@ export default function App() {
 
   const handleUpdateAvatar = (target: 'boyfriend' | 'girlfriend', newAvatar: string) => {
     if (target === 'boyfriend') {
-      handleUpdateCouple({ ...couple, boyfriendAvatar: newAvatar });
+      updateCouple({ ...couple, boyfriendAvatar: newAvatar });
     } else {
-      handleUpdateCouple({ ...couple, girlfriendAvatar: newAvatar });
+      updateCouple({ ...couple, girlfriendAvatar: newAvatar });
     }
   };
 
-  // Sync state to local storage
+  // Sync state to local storage + manage music on couple update
   const handleUpdateCouple = (newCouple: CoupleData) => {
-    setCouple(newCouple);
-    saveCoupleData(newCouple);
-    // If music setting changed
+    updateCouple(newCouple);
     if (newCouple.bgMusicEnabled && !isMusicPlaying) {
       startRomanticMusic(newCouple.bgMusicVolume ?? 0.5);
       setIsMusicPlaying(true);
@@ -129,134 +147,6 @@ export default function App() {
       stopRomanticMusic();
       setIsMusicPlaying(false);
     }
-  };
-
-  const handleAddAnniversary = (anniv: Anniversary) => {
-    const updated = [anniv, ...anniversaries];
-    setAnniversaries(updated);
-    saveAnniversaries(updated);
-  };
-
-  const handleDeleteAnniversary = (id: string) => {
-    const updated = anniversaries.filter((a) => a.id !== id);
-    setAnniversaries(updated);
-    saveAnniversaries(updated);
-  };
-
-  const handleAddLetter = (letter: LoveLetter) => {
-    const updated = [letter, ...letters];
-    setLetters(updated);
-    saveLetters(updated);
-  };
-
-  const handleDeleteLetter = (id: string) => {
-    const updated = letters.filter((l) => l.id !== id);
-    setLetters(updated);
-    saveLetters(updated);
-  };
-
-  const handleToggleFavoriteLetter = (id: string) => {
-    const updated = letters.map((l) =>
-      l.id === id ? { ...l, isFavorite: !l.isFavorite } : l
-    );
-    setLetters(updated);
-    saveLetters(updated);
-  };
-
-  const handleAddWish = (wish: WishItem) => {
-    const updated = [...wishes, wish];
-    setWishes(updated);
-    saveWishes(updated);
-  };
-
-  const handleToggleWish = (id: string) => {
-    const updated = wishes.map((w) =>
-      w.id === id ? { ...w, completed: !w.completed } : w
-    );
-    setWishes(updated);
-    saveWishes(updated);
-  };
-
-  const handleHeartWish = (id: string) => {
-    const updated = wishes.map((w) =>
-      w.id === id ? { ...w, hearts: w.hearts + 1 } : w
-    );
-    setWishes(updated);
-    saveWishes(updated);
-  };
-
-  const handleDeleteWish = (id: string) => {
-    const updated = wishes.filter((w) => w.id !== id);
-    setWishes(updated);
-    saveWishes(updated);
-  };
-
-  // Photo album handlers
-  const handleAddPhoto = (photo: CouplePhoto) => {
-    const updated = [photo, ...photos];
-    setPhotos(updated);
-    savePhotos(updated);
-  };
-
-  const handleDeletePhoto = (id: string) => {
-    const updated = photos.filter((p) => p.id !== id);
-    setPhotos(updated);
-    savePhotos(updated);
-  };
-
-  const handleToggleFavoritePhoto = (id: string) => {
-    const updated = photos.map((p) =>
-      p.id === id ? { ...p, isFavorite: !p.isFavorite } : p
-    );
-    setPhotos(updated);
-    savePhotos(updated);
-  };
-
-  const handleHeartPhoto = (id: string) => {
-    const updated = photos.map((p) =>
-      p.id === id ? { ...p, hearts: p.hearts + 1 } : p
-    );
-    setPhotos(updated);
-    savePhotos(updated);
-  };
-
-  const handleEditCaptionPhoto = (id: string, newCaption: string) => {
-    const updated = photos.map((p) =>
-      p.id === id ? { ...p, caption: newCaption } : p
-    );
-    setPhotos(updated);
-    savePhotos(updated);
-  };
-
-  // Daily Notes Handlers
-  const handleAddOrUpdateNote = (note: DailyNote) => {
-    const existingIndex = dailyNotes.findIndex(
-      (n) => n.id === note.id || n.date === note.date
-    );
-    let updated: DailyNote[];
-    if (existingIndex >= 0) {
-      updated = [...dailyNotes];
-      updated[existingIndex] = note;
-    } else {
-      updated = [note, ...dailyNotes];
-    }
-    updated.sort((a, b) => b.date.localeCompare(a.date));
-    setDailyNotes(updated);
-    saveDailyNotes(updated);
-  };
-
-  const handleDeleteNote = (id: string) => {
-    const updated = dailyNotes.filter((n) => n.id !== id);
-    setDailyNotes(updated);
-    saveDailyNotes(updated);
-  };
-
-  const handleHeartNote = (id: string) => {
-    const updated = dailyNotes.map((n) =>
-      n.id === id ? { ...n, hearts: (n.hearts || 0) + 1 } : n
-    );
-    setDailyNotes(updated);
-    saveDailyNotes(updated);
   };
 
   const handleOpenNoteModal = (note?: DailyNote | null, date?: string) => {
@@ -282,7 +172,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `SaoLuu_DemNgayChoAnh_${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `SaoLuu_DemNgayChoAnh_${todayStr()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -295,29 +185,7 @@ export default function App() {
       reader.onload = (event) => {
         try {
           const parsed = JSON.parse(event.target?.result as string);
-          if (parsed.couple) {
-            handleUpdateCouple(parsed.couple);
-          }
-          if (parsed.anniversaries) {
-            setAnniversaries(parsed.anniversaries);
-            saveAnniversaries(parsed.anniversaries);
-          }
-          if (parsed.letters) {
-            setLetters(parsed.letters);
-            saveLetters(parsed.letters);
-          }
-          if (parsed.wishes) {
-            setWishes(parsed.wishes);
-            saveWishes(parsed.wishes);
-          }
-          if (parsed.photos) {
-            setPhotos(parsed.photos);
-            savePhotos(parsed.photos);
-          }
-          if (parsed.dailyNotes && Array.isArray(parsed.dailyNotes)) {
-            setDailyNotes(parsed.dailyNotes);
-            saveDailyNotes(parsed.dailyNotes);
-          }
+          importData(parsed);
           setBackupToast('Khôi phục dữ liệu sao lưu thành công! 💕');
           setTimeout(() => setBackupToast(null), 3500);
         } catch {
@@ -328,14 +196,6 @@ export default function App() {
       reader.readAsText(file);
     }
   };
-
-  // Calculate live countdown metrics
-  const countdown = calculateMilitaryCountdown(
-    couple.militaryStartDate,
-    couple.militaryEndDate,
-    couple.datingStartDate,
-    currentTime
-  );
 
   // Calculate urgent anniversaries count for top badge
   const urgentAnniversariesCount = anniversaries.filter(
@@ -385,9 +245,9 @@ export default function App() {
             <TodayDailyNoteCard
               notes={dailyNotes}
               couple={couple}
-              onAddOrUpdateNote={handleAddOrUpdateNote}
-              onDeleteNote={handleDeleteNote}
-              onHeartNote={handleHeartNote}
+              onAddOrUpdateNote={addOrUpdateNote}
+              onDeleteNote={deleteNote}
+              onHeartNote={heartNote}
               onOpenModal={handleOpenNoteModal}
               onViewAllNotes={() => setActiveTab('notes')}
               soundEnabled={couple.soundEnabled}
@@ -552,8 +412,8 @@ export default function App() {
         {activeTab === 'anniversaries' && (
           <AnniversariesSection
             anniversaries={anniversaries}
-            onAddAnniversary={handleAddAnniversary}
-            onDeleteAnniversary={handleDeleteAnniversary}
+            onAddAnniversary={addAnniversary}
+            onDeleteAnniversary={deleteAnniversary}
             soundEnabled={couple.soundEnabled}
           />
         )}
@@ -561,11 +421,11 @@ export default function App() {
         {activeTab === 'album' && (
           <PhotoAlbumSection
             photos={photos}
-            onAddPhoto={handleAddPhoto}
-            onDeletePhoto={handleDeletePhoto}
-            onToggleFavorite={handleToggleFavoritePhoto}
-            onHeartPhoto={handleHeartPhoto}
-            onEditCaption={handleEditCaptionPhoto}
+            onAddPhoto={addPhoto}
+            onDeletePhoto={deletePhoto}
+            onToggleFavorite={toggleFavoritePhoto}
+            onHeartPhoto={heartPhoto}
+            onEditCaption={editPhotoCaption}
             soundEnabled={couple.soundEnabled}
           />
         )}
@@ -581,9 +441,9 @@ export default function App() {
         {activeTab === 'letters' && (
           <LoveLettersSection
             letters={letters}
-            onAddLetter={handleAddLetter}
-            onDeleteLetter={handleDeleteLetter}
-            onToggleFavorite={handleToggleFavoriteLetter}
+            onAddLetter={addLetter}
+            onDeleteLetter={deleteLetter}
+            onToggleFavorite={toggleFavoriteLetter}
             soundEnabled={couple.soundEnabled}
           />
         )}
@@ -592,9 +452,9 @@ export default function App() {
           <DailyNotesSection
             notes={dailyNotes}
             couple={couple}
-            onAddOrUpdateNote={handleAddOrUpdateNote}
-            onDeleteNote={handleDeleteNote}
-            onHeartNote={handleHeartNote}
+            onAddOrUpdateNote={addOrUpdateNote}
+            onDeleteNote={deleteNote}
+            onHeartNote={heartNote}
             onOpenModal={handleOpenNoteModal}
             soundEnabled={couple.soundEnabled}
           />
@@ -603,10 +463,10 @@ export default function App() {
         {activeTab === 'wishes' && (
           <WishListSection
             wishes={wishes}
-            onAddWish={handleAddWish}
-            onToggleWish={handleToggleWish}
-            onHeartWish={handleHeartWish}
-            onDeleteWish={handleDeleteWish}
+            onAddWish={addWish}
+            onToggleWish={toggleWish}
+            onHeartWish={heartWish}
+            onDeleteWish={deleteWish}
             soundEnabled={couple.soundEnabled}
           />
         )}
@@ -654,7 +514,7 @@ export default function App() {
           setEditingNote(null);
           setTargetNoteDate(undefined);
         }}
-        onSave={handleAddOrUpdateNote}
+        onSave={addOrUpdateNote}
         initialNote={editingNote}
         targetDate={targetNoteDate}
         soundEnabled={couple.soundEnabled}

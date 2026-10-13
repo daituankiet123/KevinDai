@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Heart, Settings, Shield, User, Calendar, Volume2, Sparkles, MapPin, Camera, Upload } from 'lucide-react';
+import { Shield, User, Calendar, Volume2, Camera } from 'lucide-react';
 import { CoupleData } from '../types';
 import { playHeartPop } from '../utils/audio';
+import { compressImage } from '../utils/imageCompression';
 
 interface CoupleSettingsModalProps {
   isOpen: boolean;
@@ -123,16 +124,15 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            if (typeof reader.result === 'string') {
-                              setFormData({ ...formData, boyfriendAvatar: reader.result });
-                            }
-                          };
-                          reader.readAsDataURL(file);
+                          try {
+                            const avatar = await compressImage(file, { maxDimension: 512, quality: 0.85 });
+                            setFormData({ ...formData, boyfriendAvatar: avatar });
+                          } catch {
+                            alert('Không thể tải ảnh, vui lòng thử lại.');
+                          }
                         }
                       }}
                       className="hidden"
@@ -208,23 +208,22 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                 <label className="cursor-pointer px-3 py-1.5 rounded-xl border border-pink-300 bg-white hover:bg-pink-50 text-rose-800 text-xs font-bold transition flex items-center gap-1">
                   <Camera className="w-3.5 h-3.5 text-rose-600" />
                   <span>Tải ảnh từ máy</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          if (typeof reader.result === 'string') {
-                            setFormData({ ...formData, girlfriendAvatar: reader.result });
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            const avatar = await compressImage(file, { maxDimension: 512, quality: 0.85 });
+                            setFormData({ ...formData, girlfriendAvatar: avatar });
+                          } catch {
+                            alert('Không thể tải ảnh, vui lòng thử lại.');
                           }
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                    className="hidden"
-                  />
+                        }
+                      }}
+                      className="hidden"
+                    />
                 </label>
                 <div className="flex items-center gap-1 overflow-x-auto">
                   {AVATAR_OPTIONS_GIRL.map((av) => (

@@ -7,15 +7,16 @@ import {
   Plus,
   Edit3,
   Trash2,
-  Sparkles,
   BookOpen,
-  MessageCircle,
   Clock,
   Tag,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { DailyNote, CoupleData } from '../types';
 import { playHeartPop } from '../utils/audio';
+import { todayStr } from '../utils/dateUtils';
+import { DAILY_NOTE_MOOD_META } from '../constants';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface TodayDailyNoteCardProps {
   notes: DailyNote[];
@@ -28,28 +29,19 @@ interface TodayDailyNoteCardProps {
   soundEnabled: boolean;
 }
 
-const MOOD_META: Record<string, { icon: string; label: string; badgeClass: string }> = {
-  love: { icon: '💖', label: 'Yêu thương', badgeClass: 'bg-rose-100 text-rose-700 border-rose-200' },
-  miss: { icon: '🥺', label: 'Nhớ da diết', badgeClass: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
-  happy: { icon: '🌸', label: 'Vui vẻ & Bình yên', badgeClass: 'bg-amber-100 text-amber-800 border-amber-200' },
-  proud: { icon: '🎖️', label: 'Tự hào chàng lính', badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-  special: { icon: '📞', label: 'Cuộc gọi / Sự kiện', badgeClass: 'bg-sky-100 text-sky-800 border-sky-200' },
-  excited: { icon: '🌟', label: 'Háo hức & Động lực', badgeClass: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  tired: { icon: '🔋', label: 'Mệt nhưng cố gắng', badgeClass: 'bg-teal-100 text-teal-800 border-teal-200' },
-};
+const MOOD_META = DAILY_NOTE_MOOD_META;
 
 export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
   notes,
   couple,
-  onAddOrUpdateNote,
   onDeleteNote,
   onHeartNote,
   onOpenModal,
   onViewAllNotes,
   soundEnabled,
 }) => {
-  const getTodayStr = () => new Date().toISOString().slice(0, 10);
-  const [selectedDate, setSelectedDate] = useState<string>(getTodayStr());
+  const [selectedDate, setSelectedDate] = useState<string>(todayStr());
+  const { confirm, ConfirmDialogElement } = useConfirm();
 
   // Find note for currently selected date
   const noteForDate = notes.find((n) => n.date === selectedDate);
@@ -59,15 +51,15 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
     playHeartPop(soundEnabled);
     const d = new Date(selectedDate);
     d.setDate(d.getDate() + days);
-    setSelectedDate(d.toISOString().slice(0, 10));
+    setSelectedDate(todayStr(d));
   };
 
   const handleGoToday = () => {
     playHeartPop(soundEnabled);
-    setSelectedDate(getTodayStr());
+    setSelectedDate(todayStr());
   };
 
-  const isToday = selectedDate === getTodayStr();
+  const isToday = selectedDate === todayStr();
 
   // Format date display
   const formatDateVietnamese = (dateStr: string) => {
@@ -235,8 +227,14 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
                 <span>Sửa</span>
               </button>
               <button
-                onClick={() => {
-                  if (window.confirm('Bạn có chắc muốn xóa ghi chú này không?')) {
+                aria-label="Xóa ghi chú"
+                onClick={async () => {
+                  const ok = await confirm({
+                    title: 'Xóa ghi chú',
+                    message: 'Bạn có chắc muốn xóa ghi chú này không?',
+                    confirmLabel: 'Xóa',
+                  });
+                  if (ok) {
                     onDeleteNote(noteForDate.id);
                   }
                 }}
@@ -311,6 +309,8 @@ export const TodayDailyNoteCard: React.FC<TodayDailyNoteCardProps> = ({
           <span>→</span>
         </button>
       </div>
+
+      {ConfirmDialogElement}
     </div>
   );
 };

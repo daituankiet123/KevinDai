@@ -17,7 +17,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      webSecurity: false,
+      sandbox: true,
+      webSecurity: true,
     },
     autoHideMenuBar: true,
   });

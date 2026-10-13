@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Volume2, VolumeX, Sparkles, Download, Settings, BellRing, Music, Disc, Pin } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, Download, Settings, Music, Pin } from 'lucide-react';
 import { playHeartPop } from '../utils/audio';
 
 interface HeaderProps {

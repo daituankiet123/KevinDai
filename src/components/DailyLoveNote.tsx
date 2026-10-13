@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Copy, Check, Heart, RefreshCw } from 'lucide-react';
+import { Copy, Check, RefreshCw } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playHeartPop } from '../utils/audio';
 

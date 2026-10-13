@@ -1,4 +1,5 @@
 import { Anniversary } from '../types';
+import { parseLocalDate } from './dateUtils';
 
 export interface CountdownState {
   isBeforeStart: boolean;
@@ -21,9 +22,9 @@ export function calculateMilitaryCountdown(
   datingDateStr: string,
   now: Date = new Date()
 ): CountdownState {
-  const start = new Date(startDateStr).getTime();
-  const end = new Date(endDateStr).getTime();
-  const dating = new Date(datingDateStr).getTime();
+  const start = parseLocalDate(startDateStr).getTime();
+  const end = parseLocalDate(endDateStr).getTime();
+  const dating = parseLocalDate(datingDateStr).getTime();
   const current = now.getTime();
 
   const totalMs = Math.max(1, end - start);
@@ -34,9 +35,9 @@ export function calculateMilitaryCountdown(
   const isBeforeStart = current < start;
   const isCompleted = current >= end;
 
-  let daysPassed = 0;
-  let daysRemaining = 0;
-  let progressPercent = 0;
+  let daysPassed: number;
+  let daysRemaining: number;
+  let progressPercent: number;
 
   if (isBeforeStart) {
     const diffToStart = start - current;
@@ -121,7 +122,7 @@ export function getAnniversaryStatus(anniv: Anniversary, now: Date = new Date())
     };
   } else {
     // Specific date
-    const fullDate = new Date(anniv.date);
+    const fullDate = parseLocalDate(anniv.date);
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     const target = new Date(fullDate.getFullYear(), fullDate.getMonth(), fullDate.getDate()).getTime();
     const diff = Math.ceil((target - startOfToday) / (1000 * 60 * 60 * 24));

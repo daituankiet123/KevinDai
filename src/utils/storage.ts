@@ -350,29 +350,6 @@ export function saveWishes(data: WishItem[]) {
   }
 }
 
-export function loadPhotos(): CouplePhoto[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.PHOTOS);
-    if (!raw) return DEFAULT_PHOTOS;
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      savePhotos(DEFAULT_PHOTOS);
-      return DEFAULT_PHOTOS;
-    }
-    return parsed;
-  } catch {
-    return DEFAULT_PHOTOS;
-  }
-}
-
-export function savePhotos(data: CouplePhoto[]) {
-  try {
-    localStorage.setItem(STORAGE_KEYS.PHOTOS, JSON.stringify(data));
-  } catch (e) {
-    console.error('Save photos error:', e);
-  }
-}
-
 export function loadDailyNotes(): DailyNote[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.DAILY_NOTES);

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { X, Heart, Calendar, Sparkles, MessageSquare, Tag, UserCheck, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Calendar, Sparkles, MessageSquare, Tag, UserCheck, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { DailyNote, DailyNoteMood, DailyNoteAuthor } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
+import { todayStr } from '../utils/dateUtils';
+import { SUGGESTED_NOTE_TAGS } from '../constants';
 
 interface DailyNoteModalProps {
   isOpen: boolean;
@@ -25,16 +27,7 @@ const MOOD_OPTIONS: { id: DailyNoteMood; label: string; icon: string; bg: string
   { id: 'tired', label: 'Mệt nhưng cố gắng', icon: '🔋', bg: 'bg-teal-50 border-teal-200', text: 'text-teal-700' },
 ];
 
-const SUGGESTED_TAGS = [
-  'Cuộc gọi đơn vị',
-  'Thăm nuôi',
-  'Thao trường',
-  'Gửi thư tay',
-  'Kỷ niệm',
-  'Động viên',
-  'Ngày bình yên',
-  'Học Y tá Đại đội',
-];
+const SUGGESTED_TAGS = SUGGESTED_NOTE_TAGS;
 
 const QUICK_PROMPTS = [
   'Hôm nay nghe được giọng anh 5 phút qua điện thoại, nghe anh cười là em an tâm cả ngày!',
@@ -44,8 +37,15 @@ const QUICK_PROMPTS = [
   'Hoàn thành xuất sắc nhiệm vụ trực ban hôm nay, chiến sĩ nhớ cô bé của anh thật nhiều!',
 ];
 
-export const DailyNoteModal: React.FC<DailyNoteModalProps> = ({
-  isOpen,
+export const DailyNoteModal: React.FC<DailyNoteModalProps> = ({ isOpen, ...rest }) => {
+  if (!isOpen) return null;
+  // Remount the form whenever the target note/date changes so state is
+  // initialized from props without a state-syncing effect.
+  const formKey = rest.initialNote?.id ?? rest.targetDate ?? 'new';
+  return <DailyNoteForm key={formKey} {...rest} />;
+};
+
+const DailyNoteForm: React.FC<Omit<DailyNoteModalProps, 'isOpen'>> = ({
   onClose,
   onSave,
   initialNote,
@@ -54,34 +54,12 @@ export const DailyNoteModal: React.FC<DailyNoteModalProps> = ({
   boyfriendName = 'Đại Tuấn Kiệt',
   girlfriendName = 'Lê Thị Thanh Tuyền',
 }) => {
-  const getTodayStr = () => new Date().toISOString().slice(0, 10);
-
-  const [date, setDate] = useState<string>(targetDate || getTodayStr());
-  const [content, setContent] = useState<string>('');
-  const [mood, setMood] = useState<DailyNoteMood>('love');
-  const [author, setAuthor] = useState<DailyNoteAuthor>('girlfriend');
-  const [tag, setTag] = useState<string>('Tâm sự');
+  const [date, setDate] = useState<string>(initialNote?.date || targetDate || todayStr());
+  const [content, setContent] = useState<string>(initialNote?.content || '');
+  const [mood, setMood] = useState<DailyNoteMood>(initialNote?.mood || 'love');
+  const [author, setAuthor] = useState<DailyNoteAuthor>(initialNote?.author || 'girlfriend');
+  const [tag, setTag] = useState<string>(initialNote?.tag || 'Cuộc gọi đơn vị');
   const [customTag, setCustomTag] = useState<string>('');
-
-  useEffect(() => {
-    if (initialNote) {
-      setDate(initialNote.date);
-      setContent(initialNote.content);
-      setMood(initialNote.mood);
-      setAuthor(initialNote.author);
-      setTag(initialNote.tag || 'Tâm sự');
-      setCustomTag('');
-    } else {
-      setDate(targetDate || getTodayStr());
-      setContent('');
-      setMood('love');
-      setAuthor('girlfriend');
-      setTag('Cuộc gọi đơn vị');
-      setCustomTag('');
-    }
-  }, [initialNote, targetDate, isOpen]);
-
-  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

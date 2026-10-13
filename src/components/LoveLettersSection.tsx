@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Plus, Heart, Sparkles, Image, Calendar, Trash2, Star, Eye } from 'lucide-react';
+import { Plus, Sparkles, Image, Calendar, Trash2, Star } from 'lucide-react';
 import { LoveLetter, MoodType } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
+import { compressImage } from '../utils/imageCompression';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface LoveLettersSectionProps {
   letters: LoveLetter[];
@@ -30,6 +32,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
   const [showWriteModal, setShowWriteModal] = useState(false);
   const [selectedLetter, setSelectedLetter] = useState<LoveLetter | null>(null);
   const [randomModal, setRandomModal] = useState(false);
+  const { confirm, ConfirmDialogElement } = useConfirm();
 
   // Form states
   const [title, setTitle] = useState('');
@@ -45,14 +48,15 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
     playSweetChime(soundEnabled);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImage(file);
+        setPhotoUrl(compressed);
+      } catch {
+        alert('Không thể tải ảnh, vui lòng thử lại.');
+      }
     }
   };
 
@@ -205,8 +209,14 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
                       <Star className={`w-4 h-4 ${letter.isFavorite ? 'fill-amber-500' : ''}`} />
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm('Bạn có chắc muốn xóa bức thư này không?')) {
+                      aria-label="Xóa bức thư"
+                      onClick={async () => {
+                        const ok = await confirm({
+                          title: 'Xóa bức thư',
+                          message: 'Bạn có chắc muốn xóa bức thư này không?',
+                          confirmLabel: 'Xóa thư',
+                        });
+                        if (ok) {
                           onDeleteLetter(letter.id);
                         }
                       }}
@@ -400,6 +410,8 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
           </div>
         </div>
       )}
+
+      {ConfirmDialogElement}
     </div>
   );
 };

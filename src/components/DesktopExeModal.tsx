@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Download, Monitor, Check, Copy, HardDrive, FileArchive, FileCode, Sparkles, ExternalLink } from 'lucide-react';
-import { playHeartPop, playSweetChime } from '../utils/audio';
+import { Download, Check, Copy, HardDrive, FileArchive, FileCode } from 'lucide-react';
+import { playSweetChime } from '../utils/audio';
 
 interface DesktopExeModalProps {
   isOpen: boolean;

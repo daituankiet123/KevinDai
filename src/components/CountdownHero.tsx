@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { Heart, Sparkles, Calendar, Shield, MapPin, Smile, Clock, Send, Camera, Copy, Check } from 'lucide-react';
+import { Heart, Sparkles, Calendar, Shield, MapPin, Smile, Send, Camera, Copy, Check } from 'lucide-react';
 import { CoupleData } from '../types';
 import { CountdownState } from '../utils/dateCalculations';
-import { playHeartPop, playSweetChime } from '../utils/audio';
+import { playSweetChime } from '../utils/audio';
+import { compressImage } from '../utils/imageCompression';
 
 interface CountdownHeroProps {
   couple: CoupleData;
@@ -16,7 +17,6 @@ interface CountdownHeroProps {
 export const CountdownHero: React.FC<CountdownHeroProps> = ({
   couple,
   countdown,
-  onOpenSettings,
   onTriggerFireworks,
   onUpdateAvatar,
 }) => {
@@ -43,17 +43,20 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
     setTimeout(() => setCopiedNotice(false), 2500);
   };
 
-  const handleUploadAvatar = (target: 'boyfriend' | 'girlfriend', e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadAvatar = async (target: 'boyfriend' | 'girlfriend', e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (onUpdateAvatar && typeof reader.result === 'string') {
-          onUpdateAvatar(target, reader.result);
+      try {
+        const avatar = await compressImage(file, { maxDimension: 512, quality: 0.85 });
+        if (onUpdateAvatar) {
+          onUpdateAvatar(target, avatar);
           playSweetChime(couple.soundEnabled);
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'IMAGE_TOO_LARGE') {
+          alert('Ảnh quá lớn (>8MB), vui lòng chọn ảnh nhẹ hơn.');
+        }
+      }
     }
   };
 

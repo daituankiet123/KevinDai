@@ -1,0 +1,7 @@
+dist/
+dist-singlefile/
+node_modules/
+public/
+dev-dist/
+bun.lock
+package-lock.json

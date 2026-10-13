@@ -3,6 +3,7 @@ import { Check, Plus, Heart, Sparkles, Trash2, ListChecks } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { WishItem } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface WishListSectionProps {
   wishes: WishItem[];
@@ -27,6 +28,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState('Hẹn hò');
   const [showAddModal, setShowAddModal] = useState(false);
+  const { confirm, ConfirmDialogElement } = useConfirm();
 
   const completedCount = wishes.filter((w) => w.completed).length;
 
@@ -188,8 +190,14 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
               </button>
 
               <button
-                onClick={() => {
-                  if (confirm(`Bạn muốn xóa điều ước "${item.title}"?`)) {
+                aria-label="Xóa điều ước"
+                onClick={async () => {
+                  const ok = await confirm({
+                    title: 'Xóa điều ước',
+                    message: `Bạn muốn xóa điều ước "${item.title}"?`,
+                    confirmLabel: 'Xóa',
+                  });
+                  if (ok) {
                     onDeleteWish(item.id);
                   }
                 }}
@@ -270,6 +278,8 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
           </div>
         </div>
       )}
+
+      {ConfirmDialogElement}
     </div>
   );
 };

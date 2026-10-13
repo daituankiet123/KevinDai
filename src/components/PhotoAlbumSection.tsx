@@ -8,7 +8,6 @@ import {
   MapPin,
   Trash2,
   Star,
-  Eye,
   Play,
   Pause,
   X,
@@ -19,11 +18,14 @@ import {
   Search,
   ArrowUpDown,
   Upload,
-  Layers,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CouplePhoto } from '../types';
 import { playHeartPop, playSweetChime } from '../utils/audio';
+import { todayStr } from '../utils/dateUtils';
+import { PHOTO_TAG_OPTIONS } from '../constants';
+import { compressImage } from '../utils/imageCompression';
+import { useConfirm } from '../hooks/useConfirm';
 
 interface PhotoAlbumSectionProps {
   photos: CouplePhoto[];
@@ -35,7 +37,7 @@ interface PhotoAlbumSectionProps {
   soundEnabled: boolean;
 }
 
-const TAG_OPTIONS = ['Tất cả', 'Yêu thích ❤️', 'Hẹn hò', 'Sinh nhật', 'Quân ngũ', 'Kỷ niệm', 'Du lịch'];
+const TAG_OPTIONS = PHOTO_TAG_OPTIONS;
 
 export const PhotoAlbumSection: React.FC<PhotoAlbumSectionProps> = ({
   photos,
@@ -53,12 +55,13 @@ export const PhotoAlbumSection: React.FC<PhotoAlbumSectionProps> = ({
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
   const [isSlideshow, setIsSlideshow] = useState(false);
-  const [slideshowSpeed, setSlideshowSpeed] = useState(3500);
+  const [slideshowSpeed] = useState(3500);
+  const { confirm, ConfirmDialogElement } = useConfirm();
 
   // Form states for single / batch add photo
   const [fileUrls, setFileUrls] = useState<string[]>([]);
   const [caption, setCaption] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(todayStr());
   const [location, setLocation] = useState('');
   const [tag, setTag] = useState('Hẹn hò');
 
@@ -67,33 +70,28 @@ export const PhotoAlbumSection: React.FC<PhotoAlbumSectionProps> = ({
   const [editedCaption, setEditedCaption] = useState('');
 
   // Handle image upload from computer (single or multiple files)
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const urls: string[] = [];
-    let loaded = 0;
+    const filesArray = Array.from(files);
 
-    Array.from(files).forEach((file) => {
-      if (file.size > 8 * 1024 * 1024) {
-        alert(`Ảnh "${file.name}" quá lớn (>8MB), vui lòng chọn ảnh nhẹ hơn.`);
-        return;
+    for (const file of filesArray) {
+      try {
+        const compressed = await compressImage(file);
+        urls.push(compressed);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'IMAGE_TOO_LARGE') {
+          alert(`Ảnh "${file.name}" quá lớn (>8MB), vui lòng chọn ảnh nhẹ hơn.`);
+        }
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === 'string') {
-          urls.push(reader.result);
-        }
-        loaded++;
-        if (loaded === files.length) {
-          setFileUrls(urls);
-          if (files.length === 1 && !caption) {
-            setCaption(files[0].name.replace(/\.[^/.]+$/, ''));
-          }
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    }
+
+    setFileUrls(urls);
+    if (filesArray.length === 1 && !caption) {
+      setCaption(filesArray[0].name.replace(/\.[^/.]+$/, ''));
+    }
   };
 
   const handleAddSubmit = (e: React.FormEvent) => {
@@ -188,7 +186,6 @@ export const PhotoAlbumSection: React.FC<PhotoAlbumSectionProps> = ({
 
   // Total stats
   const totalHearts = photos.reduce((acc, p) => acc + p.hearts, 0);
-  const favoriteCount = photos.filter((p) => p.isFavorite).length;
 
   // Slideshow auto-advance
   useEffect(() => {
@@ -430,8 +427,14 @@ export const PhotoAlbumSection: React.FC<PhotoAlbumSectionProps> = ({
                   </button>
 
                   <button
-                    onClick={() => {
-                      if (confirm('Bạn có chắc muốn xóa ảnh này khỏi album không?')) {
+                    aria-label="Xóa ảnh khỏi album"
+                    onClick={async () => {
+                      const ok = await confirm({
+                        title: 'Xóa ảnh',
+                        message: 'Bạn có chắc muốn xóa ảnh này khỏi album không?',
+                        confirmLabel: 'Xóa ảnh',
+                      });
+                      if (ok) {
                         onDeletePhoto(photo.id);
                       }
                     }}
@@ -683,6 +686,8 @@ export const PhotoAlbumSection: React.FC<PhotoAlbumSectionProps> = ({
           </div>
         </div>
       )}
+
+      {ConfirmDialogElement}
     </div>
   );
 };

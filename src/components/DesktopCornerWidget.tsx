@@ -2,15 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Heart,
   Pin,
-  ExternalLink,
   Minimize2,
   Maximize2,
   X,
   Compass,
   Monitor,
-  Sparkles,
-  Shield,
-  Smile,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { CoupleData } from '../types';
@@ -40,7 +36,7 @@ export const DesktopCornerWidget: React.FC<DesktopCornerWidgetProps> = ({
   const [position, setPosition] = useState<CornerPosition>(() => {
     return (localStorage.getItem('corner_widget_pos') as CornerPosition) || 'bottom-right';
   });
-  const [isPipActive, setIsPipActive] = useState<boolean>(false);
+  const [, setIsPipActive] = useState<boolean>(false);
   const [justHearted, setJustHearted] = useState<boolean>(false);
 
   // Hidden canvas and video element for standard video PiP fallback

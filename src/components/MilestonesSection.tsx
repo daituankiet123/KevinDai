@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Award, Flag, Heart, Calendar, CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { Heart, CheckCircle2, Clock } from 'lucide-react';
 import { CountdownState } from '../utils/dateCalculations';
 import { CoupleData } from '../types';
 import { MilestoneCelebrationData } from './LoveFireworksModal';
@@ -84,7 +84,7 @@ const MILESTONES: MilestoneDef[] = [
   },
 ];
 
-export const MilestonesSection: React.FC<MilestonesSectionProps> = ({ countdown, couple, onTriggerFireworks }) => {
+export const MilestonesSection: React.FC<MilestonesSectionProps> = ({ countdown, onTriggerFireworks }) => {
   // Estimated months passed based on days passed
   const monthsPassed = (countdown.daysPassed / 30.4);
 

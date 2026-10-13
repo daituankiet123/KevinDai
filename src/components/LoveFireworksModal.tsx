@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import { Sparkles, Heart, X, Volume2, ShieldCheck, Award } from 'lucide-react';
+import { Sparkles, Heart, X, Award } from 'lucide-react';
 import { playCelebrationFanfare } from '../utils/audio';
 
 export interface MilestoneCelebrationData {
