@@ -47,10 +47,10 @@ export const DailyLoveNote: React.FC<DailyLoveNoteProps> = ({ soundEnabled }) =>
   };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-pink-100/90 via-rose-50/90 to-amber-50/90 p-5 border border-rose-200/80 shadow-xs">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-pink-100/90 via-rose-50/90 to-amber-50/90 p-5 border border-rose-200/80 shadow-md">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🌸</span>
+          <span className="text-xl animate-wobble">🌸</span>
           <span className="text-xs font-bold text-rose-700 uppercase tracking-wider">
             Lời Thì Thầm Cho Hậu Phương Mỗi Ngày
           </span>
@@ -72,7 +72,7 @@ export const DailyLoveNote: React.FC<DailyLoveNoteProps> = ({ soundEnabled }) =>
 
           <button
             onClick={handleNext}
-            className="flex items-center gap-1 px-3 py-1 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-lg shadow-xs transition"
+            className="flex items-center gap-1 px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 rounded-lg shadow-md transition"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Rút quẻ khác</span>

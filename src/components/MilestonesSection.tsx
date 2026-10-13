@@ -111,10 +111,10 @@ export const MilestonesSection: React.FC<MilestonesSectionProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-br from-white to-rose-50/80 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xl">🗺️</span>
+            <span className="text-xl animate-wobble">🗺️</span>
             <h2 className="text-lg font-bold text-slate-800">
               Lộ Trình 24 Tháng Nghĩa Vụ Quân Sự (2026 - 2028)
             </h2>
@@ -173,7 +173,7 @@ export const MilestonesSection: React.FC<MilestonesSectionProps> = ({
 
               {/* Card content */}
               <div
-                className={`rounded-2xl p-5 border transition duration-200 shadow-xs ${
+                className={`rounded-2xl p-5 border transition duration-200 shadow-md hover:shadow-lg ${
                   isCurrent
                     ? 'bg-gradient-to-r from-rose-50 via-pink-50 to-white border-rose-300 ring-2 ring-rose-200/50'
                     : isPassed

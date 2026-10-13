@@ -98,7 +98,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-rose-100/90 via-pink-50/80 to-white p-6 sm:p-8 md:p-10 border border-rose-200/80 shadow-md">
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-rose-50 to-pink-100/90 p-6 sm:p-8 md:p-10 border border-rose-200/80 shadow-lg">
       {/* Background soft glow circles */}
       <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-rose-300/20 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full bg-pink-300/20 blur-3xl pointer-events-none" />
@@ -223,8 +223,8 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
 
       {/* Main Countdown Clocks */}
       <div className="my-8 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-200/60 text-rose-800 font-bold text-xs sm:text-sm mb-4 border border-rose-300/50">
-          <Sparkles className="w-4 h-4 text-rose-600" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-rose-100 to-pink-100 text-rose-800 font-bold text-xs sm:text-sm mb-4 border border-rose-300/50 shadow-sm">
+          <Sparkles className="w-4 h-4 text-rose-600 animate-sparkle" />
           {countdown.isBeforeStart
             ? 'Đếm ngược ngày anh chính thức lên đường nhập ngũ 2026'
             : countdown.isCompleted
@@ -235,8 +235,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
         {/* Numbers Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
           {/* Days */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-rose-200 shadow-sm flex flex-col items-center justify-center transform hover:-translate-y-1 transition duration-200">
-            <span className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-rose-600 tabular-nums tracking-tight">
+          <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-rose-200 shadow-md flex flex-col items-center justify-center transform hover:-translate-y-1 hover:shadow-lg transition duration-200">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400" />
+            <span key={countdown.daysRemaining} className="animate-pop-in text-3xl sm:text-5xl md:text-6xl font-extrabold text-rose-600 tabular-nums tracking-tight">
               {countdown.daysRemaining}
             </span>
             <span className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-1">
@@ -248,8 +249,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
           </div>
 
           {/* Hours */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-rose-200 shadow-sm flex flex-col items-center justify-center transform hover:-translate-y-1 transition duration-200">
-            <span className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-pink-600 tabular-nums tracking-tight">
+          <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-pink-200 shadow-md flex flex-col items-center justify-center transform hover:-translate-y-1 hover:shadow-lg transition duration-200">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-pink-500 via-rose-500 to-pink-400" />
+            <span key={countdown.hours} className="animate-pop-in text-3xl sm:text-5xl md:text-6xl font-extrabold text-pink-600 tabular-nums tracking-tight">
               {countdown.hours.toString().padStart(2, '0')}
             </span>
             <span className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-1">
@@ -259,8 +261,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
           </div>
 
           {/* Minutes */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-rose-200 shadow-sm flex flex-col items-center justify-center transform hover:-translate-y-1 transition duration-200">
-            <span className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-rose-500 tabular-nums tracking-tight">
+          <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-rose-200 shadow-md flex flex-col items-center justify-center transform hover:-translate-y-1 hover:shadow-lg transition duration-200">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-400 via-pink-500 to-rose-500" />
+            <span key={countdown.minutes} className="animate-pop-in text-3xl sm:text-5xl md:text-6xl font-extrabold text-rose-500 tabular-nums tracking-tight">
               {countdown.minutes.toString().padStart(2, '0')}
             </span>
             <span className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-1">
@@ -270,8 +273,9 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
           </div>
 
           {/* Seconds */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-rose-200 shadow-sm flex flex-col items-center justify-center transform hover:-translate-y-1 transition duration-200">
-            <span className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-rose-600 tabular-nums tracking-tight">
+          <div className="group relative overflow-hidden bg-white/95 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-pink-200 shadow-md flex flex-col items-center justify-center transform hover:-translate-y-1 hover:shadow-lg transition duration-200">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-pink-400 via-rose-500 to-rose-400" />
+            <span key={countdown.seconds} className="animate-pop-in text-3xl sm:text-5xl md:text-6xl font-extrabold text-rose-600 tabular-nums tracking-tight">
               {countdown.seconds.toString().padStart(2, '0')}
             </span>
             <span className="text-xs sm:text-sm font-bold text-slate-500 uppercase tracking-wider mt-1">

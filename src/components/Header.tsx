@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-rose-100 shadow-xs transition-colors">
+    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-rose-100 shadow-sm transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Zone 1: Single text element wordmark */}
         <div className="flex items-center gap-3">
@@ -67,8 +67,8 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className="flex items-center gap-2 text-rose-600 hover:text-rose-700 transition font-cute text-xl sm:text-2xl tracking-tight select-none"
           >
-            <span className="inline-block animate-pulse-slow">💖</span>
-            <span>Chờ Anh Về</span>
+            <span className="inline-block animate-wobble">💖</span>
+            <span className="gradient-text">Chờ Anh Về</span>
             <span className="text-xs font-sans font-bold bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full ml-1 hidden sm:inline-block">
               2026-2028
             </span>
@@ -88,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({
                 }}
                 className={`relative px-3.5 py-1.5 text-sm font-semibold rounded-full transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-rose-500 text-white shadow-xs'
+                    ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md scale-105'
                     : 'text-slate-600 hover:text-rose-600 hover:bg-rose-50'
                 }`}
               >
@@ -215,7 +215,7 @@ export const Header: React.FC<HeaderProps> = ({
             }}
             className={`px-2.5 py-1 rounded-full font-bold transition whitespace-nowrap ${
               activeTab === item.id
-                ? 'bg-rose-500 text-white shadow-xs'
+                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-sm'
                 : 'text-slate-600 hover:text-rose-600'
             }`}
           >

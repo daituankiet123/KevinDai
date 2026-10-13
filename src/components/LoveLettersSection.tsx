@@ -89,10 +89,10 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Header banner */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-br from-white to-rose-50/80 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xl">💌</span>
+            <span className="text-xl animate-wobble">💌</span>
             <h2 className="text-lg font-bold text-slate-800">
               Hộp Thư Gửi Chàng Lính & Nhật Ký Chờ Đợi
             </h2>
@@ -119,7 +119,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
               setShowWriteModal(true);
               playHeartPop(soundEnabled);
             }}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-xl transition shadow-xs"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 rounded-xl transition shadow-md"
           >
             <Plus className="w-4 h-4" />
             <span>Viết Thư Mới Gửi Anh</span>
@@ -162,7 +162,7 @@ export const LoveLettersSection: React.FC<LoveLettersSectionProps> = ({
               <div
                 key={letter.id}
                 onClick={() => setSelectedLetter(letter)}
-                className="group relative rounded-2xl p-5 border border-rose-100 bg-white hover:border-rose-300 shadow-xs hover:shadow-md transition cursor-pointer flex flex-col justify-between overflow-hidden"
+                className="group relative rounded-2xl p-5 border border-rose-100 bg-white hover:border-rose-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer flex flex-col justify-between overflow-hidden"
               >
                 {/* Stamp style on top right */}
                 <div className="absolute top-3 right-3 w-10 h-10 border border-dashed border-rose-300 bg-rose-50/80 rounded-md flex flex-col items-center justify-center text-[10px] text-rose-600 font-bold rotate-6 group-hover:rotate-0 transition">

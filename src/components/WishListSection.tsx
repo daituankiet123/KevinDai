@@ -85,10 +85,10 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Banner */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-br from-white to-rose-50/80 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xl">✨</span>
+            <span className="text-xl animate-sparkle">✨</span>
             <h2 className="text-lg font-bold text-slate-800">Hộp Ước Nguyện Khi Anh Về (2028)</h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -105,7 +105,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
               setShowAddModal(true);
               playHeartPop(soundEnabled);
             }}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-xl transition shadow-xs"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 rounded-xl transition shadow-md"
           >
             <Plus className="w-4 h-4" />
             <span>Thêm Điều Ước</span>
@@ -140,7 +140,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
             onClick={() => setActiveCategory(cat)}
             className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap ${
               activeCategory === cat
-                ? 'bg-rose-500 text-white shadow-xs'
+                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md'
                 : 'bg-white text-slate-600 hover:bg-rose-50 border border-rose-100'
             }`}
           >
@@ -154,7 +154,7 @@ export const WishListSection: React.FC<WishListSectionProps> = ({
         {filteredWishes.map((item) => (
           <div
             key={item.id}
-            className={`rounded-2xl p-4 border transition duration-200 bg-white flex items-center justify-between gap-3 shadow-xs hover:shadow-md ${
+            className={`rounded-2xl p-4 border transition duration-200 bg-white flex items-center justify-between gap-3 shadow-md hover:shadow-lg hover:-translate-y-0.5 ${
               item.completed ? 'border-emerald-200 bg-emerald-50/20' : 'border-rose-100'
             }`}
           >

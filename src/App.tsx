@@ -206,7 +206,14 @@ export default function App() {
   ).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-rose-50/70 via-pink-50/40 to-rose-100/30 selection:bg-rose-200">
+    <div className="min-h-screen flex flex-col animated-bg selection:bg-rose-200">
+      {/* Decorative floating gradient blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-pink-300/30 blur-3xl" style={{ animation: 'blobFloat 12s ease-in-out infinite' }} />
+        <div className="absolute top-1/3 -right-32 w-[28rem] h-[28rem] rounded-full bg-amber-200/30 blur-3xl" style={{ animation: 'blobFloat 16s ease-in-out infinite reverse' }} />
+        <div className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-rose-300/25 blur-3xl" style={{ animation: 'blobFloat 14s ease-in-out infinite' }} />
+      </div>
+
       {/* Background Floating Hearts */}
       <HeartParticles enabled={couple.rainHeartsEnabled} />
 

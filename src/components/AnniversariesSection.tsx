@@ -169,10 +169,10 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Header & Notification Activation Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/90 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-xs">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-br from-white to-rose-50/80 backdrop-blur-sm rounded-2xl p-5 border border-rose-200/80 shadow-md">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xl">🔔</span>
+            <span className="text-xl animate-wobble">🔔</span>
             <h2 className="text-lg font-bold text-slate-800">
               Nhắc Nhở Ngày Kỷ Niệm & Cột Mốc Tình Yêu
             </h2>
@@ -215,7 +215,7 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
               setShowAddModal(true);
               playHeartPop(soundEnabled);
             }}
-            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-xl transition shadow-xs"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 rounded-xl transition shadow-md"
           >
             <Plus className="w-4 h-4" />
             <span>Thêm Ngày Kỷ Niệm Mới</span>
@@ -263,7 +263,7 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
           onClick={() => setFilter('all')}
           className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap ${
             filter === 'all'
-              ? 'bg-rose-500 text-white shadow-xs'
+              ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md'
               : 'bg-white text-slate-600 hover:bg-rose-50 border border-rose-100'
           }`}
         >
@@ -275,7 +275,7 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
             onClick={() => setFilter(cat)}
             className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap ${
               filter === cat
-                ? 'bg-rose-500 text-white shadow-xs'
+                ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md'
                 : 'bg-white text-slate-600 hover:bg-rose-50 border border-rose-100'
             }`}
           >
@@ -291,7 +291,7 @@ export const AnniversariesSection: React.FC<AnniversariesSectionProps> = ({
           return (
             <div
               key={anniversary.id}
-              className={`relative rounded-2xl p-5 border transition duration-200 bg-white shadow-xs hover:shadow-md flex flex-col justify-between ${
+              className={`relative rounded-2xl p-5 border transition duration-200 bg-white shadow-md hover:shadow-lg hover:-translate-y-0.5 flex flex-col justify-between ${
                 isToday
                   ? 'border-2 border-rose-500 ring-2 ring-rose-200 bg-rose-50/40'
                   : isUrgent
