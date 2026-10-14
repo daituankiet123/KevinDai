@@ -1,7 +1,7 @@
 node_modules/
 build/
 dist/
-ios/
+# ios/  (src/components/ios/ is source code, not Capacitor ios/ build output)
 android/
 dist-singlefile/
 dev-dist/
