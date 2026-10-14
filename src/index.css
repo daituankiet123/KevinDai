@@ -1,5 +1,55 @@
 @import "tailwindcss";
 
+@theme {
+  --color-night: #14161f;
+  --color-card: #1e2130;
+  --color-bar: #191c29;
+  --color-line: #2b3045;
+  --color-ink: #f6ede8;
+  --color-mute: #a3a8bd;
+  --color-rose: #f4a9b8;
+}
+
+/* Vùng an toàn: notch, Dynamic Island, home indicator */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+/* Chừa chỗ cho tab bar (49px + home indicator + 1rem đệm) */
+@utility pb-tabbar {
+  padding-bottom: calc(49px + env(safe-area-inset-bottom, 0px) + 1rem);
+}
+/* Nút nổi (FAB) nằm ngay trên tab bar */
+@utility bottom-fab {
+  bottom: calc(49px + env(safe-area-inset-bottom, 0px) + 1rem);
+}
+
+/* Chủ đề màu nhấn (cá nhân hóa giao diện) — ghi đè --color-rose qua data-accent */
+:root[data-accent='rose'] {
+  --color-rose: #f4a9b8;
+}
+:root[data-accent='pink'] {
+  --color-rose: #f472b6;
+}
+:root[data-accent='violet'] {
+  --color-rose: #c4b5fd;
+}
+:root[data-accent='amber'] {
+  --color-rose: #fbbf24;
+}
+:root[data-accent='teal'] {
+  --color-rose: #5eead4;
+}
+
+/* iOS App styles */
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 @layer base {
   body {
     font-family: 'Quicksand', 'Nunito', system-ui, -apple-system, sans-serif;
@@ -8,6 +58,23 @@
 
   h1, h2, h3, h4 {
     font-family: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  }
+
+  html.ios-app {
+    background: var(--color-night);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html.ios-app body {
+    margin: 0;
+    font-family: system-ui, -apple-system, 'Be Vietnam Pro', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  html.ios-app button {
+    touch-action: manipulation;
   }
 }
 
@@ -181,4 +248,47 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #fb7185;
+}
+
+/* Touch target minimum size for mobile */
+@layer utilities {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Improved focus styles for mobile */
+@layer base {
+  *:focus-visible {
+    outline: 2px solid #f43f5e;
+    outline-offset: 2px;
+  }
+}
+
+/* Mobile-optimized modal */
+@layer components {
+  .mobile-modal {
+    @apply fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-0;
+  }
+  .mobile-modal-content {
+    @apply w-full max-w-lg rounded-t-3xl bg-white shadow-2xl max-h-[90vh] flex flex-col overflow-hidden;
+  }
+}
+
+/* Better image rendering on mobile */
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }

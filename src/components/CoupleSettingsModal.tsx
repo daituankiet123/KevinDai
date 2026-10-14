@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Shield, User, Calendar, Volume2, Camera } from 'lucide-react';
+import { Shield, User, Calendar, Volume2, Camera, Image, Loader2 } from 'lucide-react';
 import { CoupleData } from '../types';
 import { playHeartPop } from '../utils/audio';
 import { compressImage } from '../utils/imageCompression';
 import { requestNotificationPermission } from '../utils/notifications';
+import { AvatarPickerFromAlbum } from './AvatarPickerFromAlbum';
+import { CouplePhoto } from '../types';
 
 interface CoupleSettingsModalProps {
   isOpen: boolean;
@@ -11,6 +13,7 @@ interface CoupleSettingsModalProps {
   couple: CoupleData;
   onSave: (data: CoupleData) => void;
   soundEnabled: boolean;
+  photos: CouplePhoto[];
 }
 
 const AVATAR_OPTIONS_BOY = ['👨‍✈️', '👮‍♂️', '💂‍♂️', '🧑‍✈️', '🧑', '😎', '🧸'];
@@ -22,8 +25,12 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
   couple,
   onSave,
   soundEnabled,
+  photos,
 }) => {
   const [formData, setFormData] = useState<CoupleData>({ ...couple });
+  const [showAvatarPickerBoy, setShowAvatarPickerBoy] = useState(false);
+  const [showAvatarPickerGirl, setShowAvatarPickerGirl] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState<'boyfriend' | 'girlfriend' | null>(null);
 
   if (!isOpen) return null;
 
@@ -35,6 +42,7 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
   };
 
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
       <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-rose-200 shadow-2xl relative max-h-[92vh] overflow-y-auto">
         <button
@@ -108,33 +116,41 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                 />
               </div>
 
-              <div>
+<div>
                 <label className="block font-bold text-slate-700 uppercase mb-1">
                   Ảnh đại diện của anh (Ông Chã Húi)
                 </label>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center text-xl overflow-hidden border border-emerald-300 shrink-0">
+                  <div className="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl overflow-hidden border border-emerald-300 shrink-0 relative">
                     {formData.boyfriendAvatar &&
                     (formData.boyfriendAvatar.startsWith('data:') ||
                       formData.boyfriendAvatar.startsWith('http')) ? (
-                      <img
-                        src={formData.boyfriendAvatar}
-                        alt="Boyfriend"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>{formData.boyfriendAvatar || '👨‍✈️'}</span>
-                    )}
+                    <img
+                      src={formData.boyfriendAvatar}
+                      alt="Boyfriend"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span>{formData.boyfriendAvatar || '👨‍✈️'}</span>
+                  )}
+                  {uploadingAvatar === 'boyfriend' && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-2xl">
+                      <Loader2 className="w-6 h-6 text-white animate-spin" />
+                    </div>
+                  )}
                   </div>
-                  <label className="cursor-pointer px-3 py-1.5 rounded-xl border border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition flex items-center gap-1">
-                    <Camera className="w-3.5 h-3.5 text-emerald-600" />
+                  <label className={`cursor-pointer px-3 py-2 rounded-xl border border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition flex items-center gap-1 min-h-[44px] touch-target ${uploadingAvatar === 'boyfriend' ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <Camera className="w-4 h-4 text-emerald-600" />
                     <span>Tải ảnh từ máy</span>
                     <input
                       type="file"
                       accept="image/*"
+                      capture="user"
+                      disabled={uploadingAvatar === 'boyfriend'}
                       onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          setUploadingAvatar('boyfriend');
                           try {
                             const avatar = await compressImage(file, {
                               maxDimension: 512,
@@ -143,19 +159,32 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                             setFormData({ ...formData, boyfriendAvatar: avatar });
                           } catch {
                             alert('Không thể tải ảnh, vui lòng thử lại.');
+                          } finally {
+                            setUploadingAvatar(null);
+                            e.target.value = '';
                           }
                         }
                       }}
                       className="hidden"
                     />
                   </label>
-                  <div className="flex items-center gap-1 overflow-x-auto">
+                  <button
+                    type="button"
+                    onClick={() => setShowAvatarPickerBoy(true)}
+                    disabled={uploadingAvatar === 'boyfriend'}
+                    className="cursor-pointer px-3 py-2 rounded-xl border border-emerald-300 bg-white hover:bg-emerald-50 text-emerald-800 text-xs font-bold transition flex items-center gap-1 min-h-[44px] touch-target disabled:opacity-50"
+                    aria-label="Chọn ảnh từ album"
+                  >
+                    <Image className="w-4 h-4 text-emerald-600" />
+                    <span>Chọn từ album</span>
+                  </button>
+                  <div className="flex items-center gap-1 overflow-x-auto pb-1">
                     {AVATAR_OPTIONS_BOY.map((av) => (
                       <button
                         type="button"
                         key={av}
                         onClick={() => setFormData({ ...formData, boyfriendAvatar: av })}
-                        className={`text-base p-1.5 rounded-lg border transition ${
+                        className={`text-lg p-2 rounded-lg border transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
                           formData.boyfriendAvatar === av
                             ? 'border-emerald-500 bg-emerald-100 scale-110'
                             : 'border-slate-200 hover:bg-white'
@@ -204,33 +233,41 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
               </div>
             </div>
 
-            <div>
+<div>
               <label className="block font-bold text-slate-700 uppercase mb-1">
                 Ảnh đại diện của em (Bà Chã Thơm)
               </label>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center text-xl overflow-hidden border border-pink-300 shrink-0">
+                <div className="w-16 h-16 rounded-2xl bg-pink-100 flex items-center justify-center text-2xl overflow-hidden border border-pink-300 shrink-0 relative">
                   {formData.girlfriendAvatar &&
                   (formData.girlfriendAvatar.startsWith('data:') ||
                     formData.girlfriendAvatar.startsWith('http')) ? (
-                    <img
-                      src={formData.girlfriendAvatar}
-                      alt="Girlfriend"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span>{formData.girlfriendAvatar || '👧🌸'}</span>
-                  )}
+                  <img
+                    src={formData.girlfriendAvatar}
+                    alt="Girlfriend"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span>{formData.girlfriendAvatar || '👧🌸'}</span>
+                )}
+                {uploadingAvatar === 'girlfriend' && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-2xl">
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  </div>
+                )}
                 </div>
-                <label className="cursor-pointer px-3 py-1.5 rounded-xl border border-pink-300 bg-white hover:bg-pink-50 text-rose-800 text-xs font-bold transition flex items-center gap-1">
-                  <Camera className="w-3.5 h-3.5 text-rose-600" />
+                <label className={`cursor-pointer px-3 py-2 rounded-xl border border-pink-300 bg-white hover:bg-pink-50 text-rose-800 text-xs font-bold transition flex items-center gap-1 min-h-[44px] touch-target ${uploadingAvatar === 'girlfriend' ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <Camera className="w-4 h-4 text-rose-600" />
                   <span>Tải ảnh từ máy</span>
                   <input
                     type="file"
                     accept="image/*"
+                    capture="user"
+                    disabled={uploadingAvatar === 'girlfriend'}
                     onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (file) {
+                        setUploadingAvatar('girlfriend');
                         try {
                           const avatar = await compressImage(file, {
                             maxDimension: 512,
@@ -239,19 +276,32 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
                           setFormData({ ...formData, girlfriendAvatar: avatar });
                         } catch {
                           alert('Không thể tải ảnh, vui lòng thử lại.');
+                        } finally {
+                          setUploadingAvatar(null);
+                          e.target.value = '';
                         }
                       }
                     }}
                     className="hidden"
                   />
                 </label>
-                <div className="flex items-center gap-1 overflow-x-auto">
+                <button
+                  type="button"
+                  onClick={() => setShowAvatarPickerGirl(true)}
+                  disabled={uploadingAvatar === 'girlfriend'}
+                  className="cursor-pointer px-3 py-2 rounded-xl border border-pink-300 bg-white hover:bg-pink-50 text-rose-800 text-xs font-bold transition flex items-center gap-1 min-h-[44px] touch-target disabled:opacity-50"
+                  aria-label="Chọn ảnh từ album"
+                >
+                  <Image className="w-4 h-4 text-rose-600" />
+                  <span>Chọn từ album</span>
+                </button>
+                <div className="flex items-center gap-1 overflow-x-auto pb-1">
                   {AVATAR_OPTIONS_GIRL.map((av) => (
                     <button
                       type="button"
                       key={av}
                       onClick={() => setFormData({ ...formData, girlfriendAvatar: av })}
-                      className={`text-base p-1.5 rounded-lg border transition ${
+                      className={`text-lg p-2 rounded-lg border transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
                         formData.girlfriendAvatar === av
                           ? 'border-rose-500 bg-rose-100 scale-110'
                           : 'border-slate-200 hover:bg-white'
@@ -437,5 +487,26 @@ export const CoupleSettingsModal: React.FC<CoupleSettingsModalProps> = ({
         </form>
       </div>
     </div>
+
+    <>
+    <AvatarPickerFromAlbum
+      isOpen={showAvatarPickerBoy}
+      onClose={() => setShowAvatarPickerBoy(false)}
+      photos={photos}
+      target="boyfriend"
+      onSelectAvatar={(url) => setFormData({ ...formData, boyfriendAvatar: url })}
+      soundEnabled={soundEnabled}
+    />
+
+    <AvatarPickerFromAlbum
+      isOpen={showAvatarPickerGirl}
+      onClose={() => setShowAvatarPickerGirl(false)}
+      photos={photos}
+      target="girlfriend"
+      onSelectAvatar={(url) => setFormData({ ...formData, girlfriendAvatar: url })}
+      soundEnabled={soundEnabled}
+    />
+  </>
+</>
   );
 };

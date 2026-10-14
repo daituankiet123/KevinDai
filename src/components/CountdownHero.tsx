@@ -112,7 +112,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
             onClick={() => boyfriendInputRef.current?.click()}
             title="Nhấn để đổi ảnh đại diện của Ông Chã Húi"
           >
-            <div className="relative flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 overflow-hidden text-2xl shadow-xs border-2 border-emerald-200">
+            <div className="relative flex items-center justify-center w-16 h-16 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 overflow-hidden text-2xl sm:text-3xl shadow-xs border-2 border-emerald-200">
               {isImageAvatar(couple.boyfriendAvatar) ? (
                 <img
                   src={couple.boyfriendAvatar}
@@ -133,6 +133,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
               type="file"
               ref={boyfriendInputRef}
               accept="image/*"
+              capture="user"
               onChange={(e) => handleUploadAvatar('boyfriend', e)}
               className="hidden"
             />
@@ -193,7 +194,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
             onClick={() => girlfriendInputRef.current?.click()}
             title="Nhấn để đổi ảnh đại diện của Bà Chã Thơm"
           >
-            <div className="relative flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 overflow-hidden text-2xl shadow-xs border-2 border-pink-200">
+            <div className="relative flex items-center justify-center w-16 h-16 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-pink-400 to-rose-400 overflow-hidden text-2xl sm:text-3xl shadow-xs border-2 border-pink-200">
               {isImageAvatar(couple.girlfriendAvatar) ? (
                 <img
                   src={couple.girlfriendAvatar}
@@ -214,6 +215,7 @@ export const CountdownHero: React.FC<CountdownHeroProps> = ({
               type="file"
               ref={girlfriendInputRef}
               accept="image/*"
+              capture="user"
               onChange={(e) => handleUploadAvatar('girlfriend', e)}
               className="hidden"
             />

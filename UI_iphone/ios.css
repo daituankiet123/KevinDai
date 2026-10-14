@@ -1,0 +1,54 @@
+/* Gộp vào src/index.css. Nếu index.css đã có dòng @import "tailwindcss" thì bỏ dòng đầu của file này. */
+@import "tailwindcss";
+
+/* Font tự host cho chế độ offline: npm i @fontsource/be-vietnam-pro @fontsource/playfair-display
+   rồi import trong main.tsx:
+   import '@fontsource/be-vietnam-pro/400.css';
+   import '@fontsource/be-vietnam-pro/500.css';
+   import '@fontsource/be-vietnam-pro/600.css';
+   import '@fontsource/playfair-display/600.css'; */
+
+@theme {
+  --color-night: #14161f;
+  --color-card: #1e2130;
+  --color-bar: #191c29;
+  --color-line: #2b3045;
+  --color-ink: #f6ede8;
+  --color-mute: #a3a8bd;
+  --color-rose: #f4a9b8;
+  --font-sans: "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+/* Vùng an toàn: notch, Dynamic Island, home indicator */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+/* Chừa chỗ cho tab bar (49px + home indicator + 1rem đệm) */
+@utility pb-tabbar {
+  padding-bottom: calc(49px + env(safe-area-inset-bottom, 0px) + 1rem);
+}
+/* Nút nổi (FAB) nằm ngay trên tab bar */
+@utility bottom-fab {
+  bottom: calc(49px + env(safe-area-inset-bottom, 0px) + 1rem);
+}
+
+@layer base {
+  html {
+    background: var(--color-night);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+  button {
+    touch-action: manipulation;
+  }
+}

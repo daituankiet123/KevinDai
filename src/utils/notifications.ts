@@ -18,3 +18,26 @@ export function sendNotification(title: string, body: string): void {
     // ignore failures (e.g. some browsers require a service worker)
   }
 }
+
+type BadgeNav = Navigator & { setAppBadge?: (n?: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
+
+/** Hiển thị số ngày còn lại lên badge icon app (PWA). Không hỗ trợ thì bỏ qua. */
+export async function setCountdownBadge(daysRemaining: number): Promise<void> {
+  const nav = navigator as BadgeNav;
+  if (!nav.setAppBadge) return;
+  try {
+    await nav.setAppBadge(Math.max(1, daysRemaining));
+  } catch {
+    // ignore
+  }
+}
+
+export async function clearAppBadge(): Promise<void> {
+  const nav = navigator as BadgeNav;
+  if (!nav.clearAppBadge) return;
+  try {
+    await nav.clearAppBadge();
+  } catch {
+    // ignore
+  }
+}

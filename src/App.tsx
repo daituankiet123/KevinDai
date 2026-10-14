@@ -30,8 +30,17 @@ import { startRomanticMusic, stopRomanticMusic, setRomanticMusicVolume } from '.
 import { todayStr } from './utils/dateUtils';
 import { useNow } from './hooks/useNow';
 import { useAnniversaryNotifications } from './hooks/useAnniversaryNotifications';
+import { isNativeIOSApp } from './utils/device';
+import { IosApp } from './components/ios/IosApp';
 
 export default function App() {
+  if (isNativeIOSApp()) {
+    return <IosApp />;
+  }
+  return <DesktopApp />;
+}
+
+function DesktopApp() {
   const { couple, anniversaries, letters, wishes, photos, dailyNotes, storageError, lastDeleted } =
     useAppStore(
       useShallow((s) => ({
@@ -447,6 +456,7 @@ export default function App() {
         couple={couple}
         onSave={handleUpdateCouple}
         soundEnabled={couple.soundEnabled}
+        photos={photos}
       />
 
       <LoveFireworksModal

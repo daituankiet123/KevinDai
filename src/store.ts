@@ -87,11 +87,14 @@ interface AppState {
 
   updateCouple: (data: CoupleData) => void;
   addAnniversary: (anniv: Anniversary) => void;
+  editAnniversary: (anniv: Anniversary) => void;
   deleteAnniversary: (id: string) => void;
   addLetter: (letter: LoveLetter) => void;
+  editLetter: (letter: LoveLetter) => void;
   deleteLetter: (id: string) => void;
   toggleFavoriteLetter: (id: string) => void;
   addWish: (wish: WishItem) => void;
+  editWish: (wish: WishItem) => void;
   toggleWish: (id: string) => void;
   heartWish: (id: string) => void;
   deleteWish: (id: string) => void;
@@ -186,6 +189,13 @@ export const useAppStore = create<AppState>((set) => ({
       return { anniversaries, ...(ok ? {} : { storageError: STORAGE_ERROR_MESSAGE }) };
     }),
 
+  editAnniversary: (anniv) =>
+    set((state) => {
+      const anniversaries = state.anniversaries.map((a) => (a.id === anniv.id ? anniv : a));
+      const ok = saveAnniversaries(anniversaries);
+      return { anniversaries, ...(ok ? {} : { storageError: STORAGE_ERROR_MESSAGE }) };
+    }),
+
   deleteAnniversary: (id) =>
     set((state) => {
       const deleted = state.anniversaries.find((a) => a.id === id);
@@ -201,6 +211,13 @@ export const useAppStore = create<AppState>((set) => ({
   addLetter: (letter) =>
     set((state) => {
       const letters = [letter, ...state.letters];
+      const ok = saveLetters(letters);
+      return { letters, ...(ok ? {} : { storageError: STORAGE_ERROR_MESSAGE }) };
+    }),
+
+  editLetter: (letter) =>
+    set((state) => {
+      const letters = state.letters.map((l) => (l.id === letter.id ? letter : l));
       const ok = saveLetters(letters);
       return { letters, ...(ok ? {} : { storageError: STORAGE_ERROR_MESSAGE }) };
     }),
@@ -229,6 +246,13 @@ export const useAppStore = create<AppState>((set) => ({
   addWish: (wish) =>
     set((state) => {
       const wishes = [...state.wishes, wish];
+      const ok = saveWishes(wishes);
+      return { wishes, ...(ok ? {} : { storageError: STORAGE_ERROR_MESSAGE }) };
+    }),
+
+  editWish: (wish) =>
+    set((state) => {
+      const wishes = state.wishes.map((w) => (w.id === wish.id ? wish : w));
       const ok = saveWishes(wishes);
       return { wishes, ...(ok ? {} : { storageError: STORAGE_ERROR_MESSAGE }) };
     }),

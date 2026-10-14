@@ -17,6 +17,7 @@ export const DEFAULT_COUPLE: CoupleData = {
   bgMusicEnabled: false,
   bgMusicVolume: 0.5,
   notificationsEnabled: false,
+  accentTheme: 'rose',
 };
 
 export const DEFAULT_ANNIVERSARIES: Anniversary[] = [

@@ -15,7 +15,10 @@ export interface CoupleData {
   bgMusicEnabled?: boolean;
   bgMusicVolume?: number; // 0 to 1
   notificationsEnabled?: boolean;
+  accentTheme?: AccentTheme;
 }
+
+export type AccentTheme = 'rose' | 'pink' | 'violet' | 'amber' | 'teal';
 
 export interface CouplePhoto {
   id: string;

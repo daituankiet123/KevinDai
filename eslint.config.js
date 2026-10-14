@@ -6,7 +6,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import prettier from 'eslint-config-prettier';
 
 export default [
-  { ignores: ['dist', 'dist-singlefile', 'node_modules', 'public', 'dev-dist'] },
+  { ignores: ['dist', 'dist-singlefile', 'node_modules', 'public', 'dev-dist', 'UI_iphone'] },
   js.configs.recommended,
   {
     // Node.js build scripts and Electron main process files.
