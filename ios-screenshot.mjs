@@ -50,4 +50,3 @@ await page.waitForTimeout(600);
 await page.screenshot({ path: `${OUT}/7-note-modal.png` });
 
 await browser.close();
-console.log('done ->', OUT);
