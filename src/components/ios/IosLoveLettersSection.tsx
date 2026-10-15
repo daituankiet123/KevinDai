@@ -3,6 +3,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Icon } from './Icon';
 import { useAppStore } from '../../store';
 import { playHeartPop } from '../../utils/audio';
+import { compressImage } from '../../utils/imageCompression';
 import { newId } from '../../utils/id';
 import type { LoveLetter, MoodType } from '../../types';
 
@@ -37,6 +38,8 @@ export function IosLoveLettersSection({
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [mood, setMood] = useState<MoodType>('love');
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const filtered = letters.filter((l) => {
     if (!search.trim()) return true;
@@ -49,6 +52,7 @@ export function IosLoveLettersSection({
     setTitle('');
     setContent('');
     setMood('love');
+    setPhotoPreview(null);
     setShowAdd(true);
   };
 
@@ -57,8 +61,27 @@ export function IosLoveLettersSection({
     setTitle(letter.title);
     setContent(letter.content);
     setMood(letter.mood);
+    setPhotoPreview(letter.photoUrl || null);
     setShowAdd(true);
   };
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadingPhoto(true);
+      try {
+        const compressed = await compressImage(file);
+        setPhotoPreview(compressed);
+      } catch {
+        alert('Không thể tải ảnh, vui lòng thử lại.');
+      } finally {
+        setUploadingPhoto(false);
+        e.target.value = '';
+      }
+    }
+  };
+
+  const removePhoto = () => setPhotoPreview(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +92,7 @@ export function IosLoveLettersSection({
       title: title.trim() || 'Gửi anh',
       content: content.trim(),
       mood,
+      photoUrl: photoPreview || undefined,
       isFavorite: editing ? editing.isFavorite : false,
     };
     if (editing) onEditLetter(payload);
@@ -134,6 +158,15 @@ export function IosLoveLettersSection({
                   {new Date(letter.date).toLocaleDateString('vi-VN')}
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-ink/90">{letter.content}</p>
+                {letter.photoUrl && (
+                  <div className="mt-2 rounded-xl overflow-hidden bg-line">
+                    <img
+                      src={letter.photoUrl}
+                      alt="Đính kèm"
+                      className="w-full h-32 object-cover"
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="mt-3 flex justify-end gap-4 border-t border-line pt-2">
@@ -183,7 +216,7 @@ export function IosLoveLettersSection({
               </h2>
               <button
                 type="button"
-                onClick={() => setShowAdd(false)}
+                onClick={() => { setShowAdd(false); setPhotoPreview(null); }}
                 aria-label="Đóng"
                 className="flex size-9 items-center justify-center rounded-full bg-line text-mute active:bg-white/10"
               >
@@ -225,10 +258,35 @@ export function IosLoveLettersSection({
                 className="w-full resize-none rounded-xl border border-line bg-night px-4 py-3 text-sm text-ink placeholder:text-mute/50 focus:border-rose focus:outline-none"
                 autoFocus
               />
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-mute">Đính kèm ảnh</label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <label className={`cursor-pointer flex items-center gap-2 px-3 py-2 rounded-xl border border-line text-xs font-semibold text-rose active:bg-line transition ${uploadingPhoto ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <Icon name="image" size={16} />
+                    <span>Chọn từ máy / Camera</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="user"
+                      disabled={uploadingPhoto}
+                      onChange={handlePhotoSelect}
+                      className="hidden"
+                    />
+                  </label>
+                  {photoPreview && (
+                    <div className="flex items-center gap-2">
+                      <img src={photoPreview} alt="Preview" className="w-8 h-8 rounded-lg object-cover border" />
+                      <button type="button" onClick={removePhoto} className="text-xs text-red-400 underline">
+                        Bỏ ảnh
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setShowAdd(false)}
+                  onClick={() => { setShowAdd(false); setPhotoPreview(null); }}
                   className="flex-1 rounded-xl border border-line py-3 text-sm font-semibold text-mute active:bg-line"
                 >
                   Hủy

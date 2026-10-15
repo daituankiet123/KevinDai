@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Icon } from './Icon';
 import { useAppStore } from '../../store';
 import { playHeartPop } from '../../utils/audio';
 import type { CouplePhoto } from '../../types';
+import { ZoomIn, ZoomOut, Minimize2, RotateCcw, RotateCw } from 'lucide-react';
 
 type Props = {
   onAddPhoto: (photo: CouplePhoto) => void;
@@ -319,98 +320,287 @@ export function IosPhotoAlbumSection({
 
       {/* Photo Viewer */}
       {selectedPhoto && (
-        <div className="fixed inset-0 z-50 flex flex-col bg-night">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 pt-safe pb-2">
-            <button
-              type="button"
-              onClick={closePhoto}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20"
-            >
-              <Icon name="x" size={24} />
-            </button>
-            <span className="text-sm font-semibold text-white">
-              {selectedIndex + 1} / {filteredPhotos.length}
-            </span>
-            <button
-              type="button"
-              onClick={() => onToggleFavorite(selectedPhoto.id)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20"
-            >
-              <span className="text-xl">{selectedPhoto.isFavorite ? '❤️' : '🤍'}</span>
-            </button>
-          </div>
-
-          {/* Image */}
-          <div className="flex-1 flex items-center justify-center px-4">
-            <img
-              src={selectedPhoto.url}
-              alt={selectedPhoto.caption}
-              className="max-h-full max-w-full rounded-2xl object-contain"
-            />
-          </div>
-
-          {/* Info & Actions */}
-          <div className="px-4 pb-safe pt-4">
-            <div className="mb-3 text-center">
-              <button
-                type="button"
-                onClick={() => {
-                  const next = window.prompt('Sửa lời tựa:', selectedPhoto.caption);
-                  if (next !== null && next.trim()) onEditCaption(selectedPhoto.id, next.trim());
-                }}
-                className="text-sm text-ink underline decoration-dotted underline-offset-4 active:text-rose"
-              >
-                {selectedPhoto.caption}
-              </button>
-              <p className="mt-1 text-xs text-mute">
-                {selectedPhoto.date}
-                {selectedPhoto.location && ` · ${selectedPhoto.location}`}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-center gap-4">
-              <button
-                type="button"
-                onClick={() => onHeartPhoto(selectedPhoto.id)}
-                className="flex items-center gap-1.5 rounded-full bg-rose/20 px-4 py-2 text-sm font-semibold text-rose active:bg-rose/30 transition"
-              >
-                <span>❤️</span>
-                <span>{selectedPhoto.hearts}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => onDeletePhoto(selectedPhoto.id)}
-                className="flex items-center gap-1.5 rounded-full bg-line px-4 py-2 text-sm font-semibold text-mute active:bg-white/10 transition"
-              >
-                <Icon name="trash" size={16} />
-              </button>
-            </div>
-
-            {/* Navigation */}
-            <div className="mt-4 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={goPrev}
-                disabled={selectedIndex === 0}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white disabled:opacity-30 active:bg-white/20 transition"
-              >
-                <Icon name="back" size={24} />
-              </button>
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={selectedIndex === filteredPhotos.length - 1}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white disabled:opacity-30 active:bg-white/20 transition"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m9 6 6 6-6 6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+        <IosPhotoViewer
+          photo={selectedPhoto}
+          index={selectedIndex}
+          total={filteredPhotos.length}
+          onClose={closePhoto}
+          onPrev={goPrev}
+          onNext={goNext}
+          onToggleFavorite={() => onToggleFavorite(selectedPhoto.id)}
+          onHeart={() => onHeartPhoto(selectedPhoto.id)}
+          onDelete={() => onDeletePhoto(selectedPhoto.id)}
+          onEditCaption={(caption) => onEditCaption(selectedPhoto.id, caption)}
+          canPrev={selectedIndex > 0}
+          canNext={selectedIndex < filteredPhotos.length - 1}
+        />
       )}
+    </div>
+  );
+}
+
+interface IosPhotoViewerProps {
+  photo: CouplePhoto;
+  index: number;
+  total: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onToggleFavorite: () => void;
+  onHeart: () => void;
+  onDelete: () => void;
+  onEditCaption: (caption: string) => void;
+  canPrev: boolean;
+  canNext: boolean;
+}
+
+function IosPhotoViewer({
+  photo,
+  index,
+  total,
+  onClose,
+  onPrev,
+  onNext,
+  onToggleFavorite,
+  onHeart,
+  onDelete,
+  onEditCaption,
+  canPrev,
+  canNext,
+}: IosPhotoViewerProps) {
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const handleImageLoad = useCallback(() => {
+    if (imgRef.current) {
+      setNaturalSize({
+        width: imgRef.current.naturalWidth,
+        height: imgRef.current.naturalHeight,
+      });
+      setImageLoaded(true);
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+      setRotation(0);
+    }
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setScale(prev => Math.min(Math.max(prev + delta, 0.5), 5));
+  }, []);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (scale <= 1) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+  }, [scale, position]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+  }, [isDragging, dragStart]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (scale <= 1) return;
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.touches[0].clientX - position.x, y: e.touches[0].clientY - position.y });
+    }
+  }, [scale, position]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    e.preventDefault();
+    setPosition({ x: e.touches[0].clientX - dragStart.x, y: e.touches[0].clientY - dragStart.y });
+  }, [isDragging, dragStart]);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const zoomIn = useCallback(() => setScale(prev => Math.min(prev + 0.25, 5)), []);
+  const zoomOut = useCallback(() => setScale(prev => Math.max(prev - 0.25, 0.5)), []);
+  const resetView = useCallback(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+    setRotation(0);
+  }, []);
+  const rotateLeft = useCallback(() => setRotation(prev => prev - 90), []);
+  const rotateRight = useCallback(() => setRotation(prev => prev + 90), []);
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-night"
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 pt-safe pb-2">
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20 touch-target"
+        >
+          <Icon name="x" size={24} />
+        </button>
+        <span className="text-sm font-semibold text-white">
+          {index + 1} / {total}
+        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onToggleFavorite}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20 touch-target"
+          >
+            <span className="text-xl">{photo.isFavorite ? '❤️' : '🤍'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const next = window.prompt('Sửa lời tựa:', photo.caption);
+              if (next !== null && next.trim()) onEditCaption(next.trim());
+            }}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20 touch-target"
+          >
+            <Icon name="pen" size={20} />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white active:bg-white/20 touch-target"
+          >
+            <Icon name="trash" size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Image with zoom/pan */}
+      <div
+        className="flex-1 flex items-center justify-center px-4 relative overflow-hidden"
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {!imageLoaded && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black">
+            <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+        <img
+          ref={imgRef}
+          src={photo.url}
+          alt={photo.caption}
+          onLoad={handleImageLoad}
+          className={`transition-transform duration-200 ${scale > 1 ? 'cursor-grab' : 'cursor-default'} ${isDragging ? 'cursor-grabbing' : ''}`}
+          style={{
+            transform: `translate(${position.x}px, ${position.y}px) scale(${scale}) rotate(${rotation}deg)`,
+            transformOrigin: 'center center',
+            maxHeight: '70vh',
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'contain',
+            opacity: imageLoaded ? 1 : 0,
+          }}
+          draggable={false}
+        />
+
+        {naturalSize.width > 0 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/60 text-xs px-2 py-1 rounded bg-black/50 pointer-events-none">
+            Kích thước gốc: {naturalSize.width} × {naturalSize.height}px
+            {scale !== 1 && <span className="ml-2">· Zoom: {Math.round(scale * 100)}%</span>}
+            {rotation !== 0 && <span className="ml-2">· Xoay: {rotation}°</span>}
+          </div>
+        )}
+
+        {/* Zoom controls overlay */}
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:hidden">
+          <button onClick={zoomOut} className="touch-target p-2 rounded-full bg-black/50 text-white" aria-label="Thu nhỏ">
+            <ZoomOut className="w-5 h-5" />
+          </button>
+          <button onClick={resetView} className="touch-target p-2 rounded-full bg-black/50 text-white" aria-label="Khôi phục">
+            <Minimize2 className="w-5 h-5" />
+          </button>
+          <button onClick={zoomIn} className="touch-target p-2 rounded-full bg-black/50 text-white" aria-label="Phóng to">
+            <ZoomIn className="w-5 h-5" />
+          </button>
+          <button onClick={rotateLeft} className="touch-target p-2 rounded-full bg-black/50 text-white" aria-label="Xoay trái">
+            <RotateCcw className="w-5 h-5" />
+          </button>
+          <button onClick={rotateRight} className="touch-target p-2 rounded-full bg-black/50 text-white" aria-label="Xoay phải">
+            <RotateCw className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Info & Actions */}
+      <div className="px-4 pb-safe pt-4">
+        <div className="mb-3 text-center">
+          <button
+            type="button"
+            onClick={() => {
+              const next = window.prompt('Sửa lời tựa:', photo.caption);
+              if (next !== null && next.trim()) onEditCaption(next.trim());
+            }}
+            className="text-sm text-ink underline decoration-dotted underline-offset-4 active:text-rose"
+          >
+            {photo.caption}
+          </button>
+          <p className="mt-1 text-xs text-mute">
+            {photo.date}
+            {photo.location && ` · ${photo.location}`}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={onHeart}
+            className="flex items-center gap-1.5 rounded-full bg-rose/20 px-4 py-2 text-sm font-semibold text-rose active:bg-rose/30 transition touch-target"
+          >
+            <span>❤️</span>
+            <span>{photo.hearts}</span>
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <div className="mt-4 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onPrev}
+            disabled={!canPrev}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white disabled:opacity-30 active:bg-white/20 transition touch-target"
+          >
+            <Icon name="back" size={24} />
+          </button>
+          <button
+            type="button"
+            onClick={onNext}
+            disabled={!canNext}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white disabled:opacity-30 active:bg-white/20 transition touch-target"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m9 6 6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
