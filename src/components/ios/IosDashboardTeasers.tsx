@@ -2,6 +2,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { Icon } from './Icon';
 import { useAppStore } from '../../store';
 import { getAnniversaryStatus } from '../../utils/dateCalculations';
+import { letterStatus } from '../../utils/letters';
 import { useNow } from '../../hooks/useNow';
 import type { Section } from './IosApp';
 
@@ -10,14 +11,17 @@ type Props = {
 };
 
 export function IosDashboardTeasers({ onNavigate }: Props) {
-  const { anniversaries, wishes, photos } = useAppStore(
+  const { anniversaries, wishes, photos, letters } = useAppStore(
     useShallow((s) => ({
       anniversaries: s.anniversaries,
       wishes: s.wishes,
       photos: s.photos,
+      letters: s.letters,
     }))
   );
   const now = useNow();
+  const latestLetters = [...letters].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const drafts = letters.filter((l) => letterStatus(l) === 'draft').length;
 
   return (
     <div className="space-y-3">
@@ -64,6 +68,43 @@ export function IosDashboardTeasers({ onNavigate }: Props) {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Love Letters */}
+      <div className="overflow-hidden rounded-2xl border border-line bg-card">
+        <button
+          type="button"
+          onClick={() => onNavigate('letters')}
+          className="flex w-full items-center justify-between px-4 py-3.5 active:bg-line/50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose/20 text-rose">
+              <Icon name="mail" size={20} />
+            </div>
+            <div className="text-left">
+              <div className="text-sm font-semibold text-ink">Hộp thư</div>
+              <div className="text-xs text-mute">
+                {letters.length} lá thư{drafts > 0 && ` · ${drafts} nháp`}
+              </div>
+            </div>
+          </div>
+          <Icon name="chevron" size={20} className="text-mute" />
+        </button>
+
+        {latestLetters.length > 0 && (
+          <div className="border-t border-line px-4 py-3.5">
+            <div className="space-y-1.5">
+              {latestLetters.slice(0, 2).map((l) => (
+                <div key={l.id} className="flex items-center gap-2 rounded-xl bg-line/30 px-3 py-2">
+                  <span className="text-base" aria-hidden="true">
+                    {letterStatus(l) === 'sent' ? '🔒' : '📝'}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-xs font-medium text-ink">{l.title}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}

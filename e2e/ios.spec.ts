@@ -20,3 +20,18 @@ test('creates a share code on the iOS share screen', async ({ page }) => {
   await expect(page.getByText('Mã chia sẻ', { exact: true })).toBeVisible();
   await expect(page.getByLabel('Mã chia sẻ', { exact: true })).toContainText('cav1-');
 });
+
+test('saves a draft letter and filters it in the Nháp folder', async ({ page }) => {
+  await page.getByRole('button', { name: 'Hộp thư' }).click();
+  await page.getByRole('button', { name: 'Viết thư mới' }).click();
+  await page.getByLabel('Tiêu đề').fill('Lá thư tự động tạo');
+  await page.getByLabel('Lời thư').fill('Nội dung của lá thư tự động tạo');
+  await page.getByRole('button', { name: 'Lưu nháp' }).click();
+  await expect(page.getByText('Lá thư tự động tạo', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Đã gửi' }).click();
+  await expect(page.getByText('Lá thư tự động tạo', { exact: true })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Nháp' }).click();
+  await expect(page.getByText('Lá thư tự động tạo', { exact: true })).toBeVisible();
+});
