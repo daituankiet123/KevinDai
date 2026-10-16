@@ -42,7 +42,8 @@ export function IosTodayDailyNoteCard({ onOpenModal, soundEnabled }: Props) {
                 <button
                   type="button"
                   onClick={handleHeart}
-                  className="flex items-center gap-1 text-xs text-rose active:scale-90 transition-transform"
+                  aria-label="Thả tim cho nhật ký hôm nay"
+                  className="flex items-center gap-1 text-xs text-rose active:scale-90 transition-transform touch-target"
                 >
                   <span>{todayNote.hearts > 0 ? '❤️' : '🤍'}</span>
                   <span className="font-medium">{todayNote.hearts}</span>

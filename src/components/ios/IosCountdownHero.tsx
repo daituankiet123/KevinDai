@@ -61,7 +61,7 @@ export function IosCountdownHero() {
               { value: countdown.seconds.toString().padStart(2, '0'), label: 'Giây' },
             ].map((item, i) => (
               <div key={item.label} className="flex flex-col items-center">
-                <div className="relative mb-1.5 w-full aspect-square rounded-2xl bg-night/80 border border-line flex items-center justify-center overflow-hidden">
+                <div className="relative mb-1.5 w-full aspect-square rounded-2xl bg-night/80 border border-line flex items-center justify-center overflow-hidden shadow-[0_0_24px_-6px] shadow-rose/30">
                   <span
                     key={`${item.value}-${i}`}
                     className="text-2xl sm:text-3xl font-bold text-rose tabular-nums"
@@ -98,7 +98,8 @@ export function IosCountdownHero() {
           <button
             type="button"
             onClick={handleHug}
-            className={`relative flex h-12 w-12 items-center justify-center rounded-full bg-rose transition-transform ${
+            aria-label="Gửi cái ôm tới anh"
+            className={`relative flex h-12 w-12 items-center justify-center rounded-full bg-rose animate-heart-glow transition-transform ${
               justHugged ? 'scale-110' : 'active:scale-90'
             }`}
           >
@@ -130,7 +131,7 @@ export function IosCountdownHero() {
               className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-rose to-pink-500 transition-all duration-700 relative"
               style={{ width: `${Math.min(100, countdown.progressPercent)}%` }}
             >
-              <div className="absolute inset-0 bg-white/20 animate-pulse" />
+              <div className="absolute inset-0 animate-shimmer-slide" />
             </div>
           </div>
         </div>
@@ -149,7 +150,7 @@ export function IosCountdownHero() {
         <button
           type="button"
           onClick={handleHug}
-          className="rounded-2xl border border-rose/30 bg-rose/10 p-3.5 text-center active:bg-rose/20 transition-colors"
+          className="rounded-2xl border border-rose/30 bg-rose/10 p-3.5 text-center active:bg-rose/20 animate-heart-glow transition-colors"
         >
           <div className="text-lg font-bold text-rose">{hugCount}</div>
           <div className="text-[10px] font-semibold text-mute uppercase tracking-wider">Cái ôm 💕</div>

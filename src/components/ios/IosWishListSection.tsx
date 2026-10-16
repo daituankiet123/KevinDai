@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Icon } from './Icon';
+import { EmptyState } from './EmptyState';
+import { IosFab } from './IosFab';
 import { useAppStore } from '../../store';
 import { playHeartPop } from '../../utils/audio';
 import { newId } from '../../utils/id';
@@ -74,19 +76,11 @@ export function IosWishListSection({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-16 animate-pop-in">
       <div className="flex items-center justify-between">
         <p className="text-xs text-mute">
           {completed}/{wishes.length} đã hoàn thành
         </p>
-        <button
-          type="button"
-          onClick={openAdd}
-          aria-label="Thêm ước nguyện"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-rose text-night active:scale-95 transition"
-        >
-          <Icon name="plus" size={24} />
-        </button>
       </div>
 
       <div className="relative">
@@ -131,7 +125,7 @@ export function IosWishListSection({
           <div
             key={wish.id}
             className={`flex items-center gap-3 rounded-2xl border p-4 ${
-              wish.completed ? 'border-line bg-card opacity-70' : 'border-line bg-card'
+              wish.completed ? 'border-line ios-card-gradient opacity-70' : 'border-line ios-card-gradient'
             }`}
           >
             <button
@@ -182,23 +176,26 @@ export function IosWishListSection({
         ))}
 
         {filtered.length === 0 && (
-          <div className="rounded-2xl border border-line bg-card p-8 text-center">
-            <div className="mb-2 text-4xl">⭐</div>
-            <p className="text-sm text-mute">
-              {search || filter !== 'all' ? 'Không tìm thấy ước nguyện nào' : 'Chưa có ước nguyện nào'}
-            </p>
-            {!search && filter === 'all' && (
-              <button
-                type="button"
-                onClick={openAdd}
-                className="mt-3 rounded-xl bg-rose px-4 py-2 text-xs font-semibold text-night"
-              >
-                Thêm ước nguyện đầu tiên
-              </button>
-            )}
-          </div>
+          <EmptyState
+            icon="⭐"
+            title={
+              search || filter !== 'all' ? 'Không tìm thấy ước nguyện nào' : 'Chưa có ước nguyện nào'
+            }
+            subtitle={
+              search || filter !== 'all'
+                ? 'Thử đổi từ khoá hoặc bộ lọc khác nhé.'
+                : 'Liệt kê những điều tụi mình muốn làm khi anh về.'
+            }
+            action={
+              !search && filter === 'all'
+                ? { label: 'Thêm ước nguyện đầu tiên', onClick: openAdd }
+                : undefined
+            }
+          />
         )}
       </div>
+
+      <IosFab label="Thêm ước nguyện" onClick={openAdd} />
 
       {showAdd && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center">

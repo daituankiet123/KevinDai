@@ -26,6 +26,70 @@
   bottom: calc(49px + env(safe-area-inset-bottom, 0px) + 1rem);
 }
 
+/* iOS card nền gradient nhẹ (card → bar) — dùng cho phần lớn card iOS */
+@utility ios-card-gradient {
+  background: linear-gradient(135deg, var(--color-card) 0%, var(--color-bar) 100%);
+}
+
+/* iOS pill — dùng cho chip/tag/badge */
+@utility ios-pill {
+  border-radius: 9999px;
+  padding: 0.25rem 0.625rem;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Slide-up animation cho bottom sheet iOS */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Glow động cho các nút chính */
+@keyframes softGlow {
+  0%, 100% {
+    box-shadow: 0 0 16px -2px var(--color-rose), 0 0 0 0 rgba(244, 169, 184, 0);
+  }
+  50% {
+    box-shadow: 0 0 24px 0 var(--color-rose), 0 0 0 6px rgba(244, 169, 184, 0.15);
+  }
+}
+.animate-soft-glow {
+  animation: softGlow 2.4s ease-in-out infinite;
+}
+
+/* Shimmer ngang (chạy qua progress bar / skeleton) */
+@keyframes shimmerSlide {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+.animate-shimmer-slide {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerSlide 1.8s linear infinite;
+}
+
+/* Float dọc cho sticker nhỏ */
+@keyframes roseFloat {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+}
+.animate-rose-float {
+  animation: roseFloat 3.4s ease-in-out infinite;
+}
+
 /* Chủ đề màu nhấn (cá nhân hóa giao diện) — ghi đè --color-rose qua data-accent */
 :root[data-accent='rose'] {
   --color-rose: #f4a9b8;
@@ -71,10 +135,25 @@
     font-family: system-ui, -apple-system, 'Be Vietnam Pro', sans-serif;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
+    background:
+      radial-gradient(900px 600px at 8% -10%, rgba(244, 169, 184, 0.10), transparent 60%),
+      radial-gradient(700px 500px at 110% 0%, rgba(196, 181, 253, 0.08), transparent 55%),
+      radial-gradient(800px 600px at 50% 110%, rgba(251, 191, 36, 0.05), transparent 60%),
+      var(--color-night);
   }
 
   html.ios-app button {
     touch-action: manipulation;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.ios-app *,
+    html.ios-app *::before,
+    html.ios-app *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 

@@ -1,3 +1,5 @@
+import type { MoodType } from './types';
+
 export interface MoodMeta {
   icon: string;
   label: string;
@@ -83,3 +85,14 @@ export const PHOTO_TAG_OPTIONS = [
   'Kỷ niệm',
   'Du lịch',
 ];
+
+export const LETTER_MOOD_META: Record<MoodType, { icon: string; label: string }> = {
+  miss: { icon: '🥺', label: 'Nhớ anh' },
+  love: { icon: '💖', label: 'Yêu anh' },
+  proud: { icon: '🎖️', label: 'Tự hào' },
+  sweet: { icon: '🌸', label: 'Ngọt ngào' },
+  waiting: { icon: '⏳', label: 'Chờ đợi' },
+  hug: { icon: '🫂', label: 'Cái ôm' },
+};
+
+export const LETTER_MOOD_ORDER: MoodType[] = ['miss', 'love', 'proud', 'sweet', 'waiting', 'hug'];

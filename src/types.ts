@@ -54,6 +54,10 @@ export interface LoveLetter {
   mood: MoodType;
   photoUrl?: string;
   isFavorite: boolean;
+  // --- optional, added later ---
+  photoUrls?: string[]; // ưu tiên dùng mảng này nếu có
+  status?: 'draft' | 'sent'; // mặc định 'sent' khi undefined (backward-compat)
+  sentAt?: string; // ISO string, set khi chuyển draft -> sent
 }
 
 export interface WishItem {

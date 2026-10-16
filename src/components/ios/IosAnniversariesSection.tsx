@@ -1,6 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Icon } from './Icon';
+import { EmptyState } from './EmptyState';
+import { IosFab } from './IosFab';
+import { useIosConfirm } from '../../hooks/useIosConfirm';
 import { useAppStore } from '../../store';
 import { getAnniversaryStatus, type AnniversaryStatus } from '../../utils/dateCalculations';
 import { playBellNotification } from '../../utils/audio';
@@ -37,6 +40,7 @@ export function IosAnniversariesSection({
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Anniversary | null>(null);
+  const { confirm, ConfirmDialogElement } = useIosConfirm();
 
   // Form
   const [title, setTitle] = useState('');
@@ -79,6 +83,16 @@ export function IosAnniversariesSection({
     setShowModal(true);
   };
 
+  const handleDelete = async (anniversary: Anniversary) => {
+    const ok = await confirm({
+      title: 'Xóa kỷ niệm này?',
+      message: `“${anniversary.title}” sẽ bị xóa khỏi danh sách.`,
+      confirmLabel: 'Xóa',
+      tone: 'danger',
+    });
+    if (ok) onDeleteAnniversary(anniversary.id);
+  };
+
   const openEdit = (a: Anniversary) => {
     setEditing(a);
     setTitle(a.title);
@@ -109,17 +123,9 @@ export function IosAnniversariesSection({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-16 animate-pop-in">
       <div className="flex items-center justify-between">
         <h1 className="text-[34px] font-semibold leading-tight">Kỷ niệm</h1>
-        <button
-          type="button"
-          onClick={openAdd}
-          aria-label="Thêm kỷ niệm"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-rose text-night active:scale-95 transition"
-        >
-          <Icon name="plus" size={24} />
-        </button>
       </div>
 
       <div className="relative">
@@ -173,7 +179,7 @@ export function IosAnniversariesSection({
           <div
             key={anniversary.id}
             className={`rounded-2xl border p-4 ${
-              isToday ? 'border-rose bg-rose/10' : 'border-line bg-card'
+              isToday ? 'border-rose bg-rose/10' : 'border-line ios-card-gradient'
             }`}
           >
             <div className="flex items-center gap-3">
@@ -184,7 +190,7 @@ export function IosAnniversariesSection({
               </div>
               <div className="text-right shrink-0">
                 {isToday ? (
-                  <span className="rounded-full bg-rose px-2.5 py-1 text-[11px] font-bold text-night">
+                  <span className="inline-block rounded-full bg-rose px-2.5 py-1 text-[11px] font-bold text-night animate-wobble">
                     Hôm nay! 🎉
                   </span>
                 ) : (
@@ -195,31 +201,42 @@ export function IosAnniversariesSection({
             {anniversary.notes && (
               <p className="mt-2 text-xs text-mute italic">"{anniversary.notes}"</p>
             )}
-            <div className="mt-3 flex items-center justify-end gap-4 border-t border-line pt-2">
+            <div className="mt-3 flex items-center justify-end gap-2 border-t border-line pt-2">
               <button
                 type="button"
                 onClick={() => openEdit(anniversary)}
-                className="text-xs text-mute underline active:text-ink"
+                aria-label={`Sửa kỷ niệm ${anniversary.title}`}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-line text-mute transition active:scale-95 active:text-ink touch-target"
               >
-                Sửa
+                <Icon name="pen" size={16} />
               </button>
               <button
                 type="button"
-                onClick={() => onDeleteAnniversary(anniversary.id)}
-                className="text-xs text-mute underline active:text-red-400"
+                onClick={() => void handleDelete(anniversary)}
+                aria-label={`Xóa kỷ niệm ${anniversary.title}`}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-line text-mute transition active:scale-95 active:text-rose touch-target"
               >
-                Xóa
+                <Icon name="trash" size={16} />
               </button>
             </div>
           </div>
         ))}
 
         {filtered.length === 0 && (
-          <div className="rounded-2xl border border-line bg-card p-8 text-center">
-            <p className="text-sm text-mute">
-              {search || filter !== 'all' ? 'Không tìm thấy kỷ niệm nào' : 'Chưa có kỷ niệm nào'}
-            </p>
-          </div>
+          <EmptyState
+            icon="🎀"
+            title={search || filter !== 'all' ? 'Không tìm thấy kỷ niệm nào' : 'Chưa có kỷ niệm nào'}
+            subtitle={
+              search || filter !== 'all'
+                ? 'Thử đổi từ khoá hoặc bộ lọc khác nhé.'
+                : 'Đánh dấu những ngày đáng nhớ của tụi mình.'
+            }
+            action={
+              !search && filter === 'all'
+                ? { label: 'Thêm kỷ niệm đầu tiên', onClick: openAdd }
+                : undefined
+            }
+          />
         )}
       </div>
 
@@ -233,7 +250,8 @@ export function IosAnniversariesSection({
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="text-mute hover:text-ink transition"
+                aria-label="Đóng"
+                className="text-mute hover:text-ink transition touch-target"
               >
                 <Icon name="x" size={24} />
               </button>
@@ -287,7 +305,8 @@ export function IosAnniversariesSection({
                       key={ic}
                       type="button"
                       onClick={() => setIcon(ic)}
-                      className={`text-xl p-2 rounded-xl border transition ${
+                      aria-label={`Chọn biểu tượng ${ic}`}
+                      className={`text-xl p-2 rounded-xl border transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
                         icon === ic ? 'border-rose bg-rose/20' : 'border-line'
                       }`}
                     >
@@ -327,6 +346,10 @@ export function IosAnniversariesSection({
           </div>
         </div>
       )}
+
+      {ConfirmDialogElement}
+
+      <IosFab label="Thêm kỷ niệm" onClick={openAdd} />
     </div>
   );
 }

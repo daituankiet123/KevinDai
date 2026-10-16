@@ -42,7 +42,7 @@ export function IosDailyLoveNote({ soundEnabled }: Props) {
     <div className="overflow-hidden rounded-2xl border border-line bg-card">
       <div className="flex items-center justify-between px-4 py-3 border-b border-line">
         <div className="flex items-center gap-2">
-          <span className="text-base">🌸</span>
+          <span className="text-base animate-sparkle">🌸</span>
           <span className="text-xs font-semibold text-mute">Lời thì thầm mỗi ngày</span>
         </div>
         <button
@@ -55,7 +55,7 @@ export function IosDailyLoveNote({ soundEnabled }: Props) {
         </button>
       </div>
       <div className="px-4 py-4">
-        <p className="text-sm leading-relaxed text-ink/90 font-medium">
+        <p className="font-script text-2xl leading-relaxed gradient-text">
           "{SWEET_NOTES[index]}"
         </p>
       </div>
