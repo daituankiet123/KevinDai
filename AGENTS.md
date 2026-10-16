@@ -11,17 +11,17 @@ React 19 + Vite 8 + Tailwind 4, TypeScript ~5.7.3, Zustand 5, tiếng Việt. Pa
 ```bash
 npm run typecheck   # tsc --noEmit
 npx eslint .        # 0 errors / 0 warnings
-npm test            # vitest run (36/36)
-npm run test:e2e    # playwright test (4/4)
+npm test            # vitest run (59/59)
+npm run test:e2e    # playwright test (9/9: app + ios + pwa; thêm --workers=1 nếu runner thiếu tài nguyên)
 npm run build       # dist + single-file + ZIP
 npm run generate:icons  # sinh icon PNG cho PWA từ public/icon.svg (cần sharp)
 ```
 
-## Mobile (iPhone/iOS)
+## Mobile (iPhone/iOS) — chỉ PWA, không làm IPA
 
-- **PWA installable** (không cần IPA): chạy trên iPhone qua Safari → "Thêm vào Màn hình chính". Cần icon PNG (`public/icon-180.png` cho apple-touch, `icon-192/512.png` cho manifest).
-- **Capacitor** (build IPA, cần macOS): `capacitor.config.ts` (`webDir: dist`). Script `cap:sync`, `cap:add:ios`, `cap:open:ios`. Thư mục `ios/` được gitignore (sinh lại bằng `npx cap add ios`).
-- **Workflow `.github/workflows/build-ios.yml`** build IPA (unsigned, dành cho sideload) trên `macos-latest`; có hỗ trợ ký nếu cấu hình secrets.
+- **PWA installable** là con đường duy nhất: Safari trên iPhone → "Thêm vào Màn hình chính". Cần icon PNG (`public/icon-180.png` cho apple-touch, `icon-192/512.png` + `icon-maskable-512.png` cho manifest) và `public/manifest.json` — `index.html` chỉ khai báo **một** `rel="manifest"` và **một** `apple-touch-icon` (plugin PWA tự chèn thêm `manifest.webmanifest`).
+- Sinh lại icon bằng `npm run generate:icons` khi sửa `public/icon.svg`.
+- **Không build IPA/App Store.** `capacitor.config.ts` + script `cap:*` còn trong repo để dùng local khi cần (không có workflow macOS nữa — `.github/workflows/build-ios.yml` đã gỡ vì runner Node 20 không tương thích Capacitor CLI yêu cầu Node ≥ 22). Không thêm workflow IPA hay dependency mới cho hướng mobile.
 
 ## Kiến trúc chính
 

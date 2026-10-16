@@ -17,7 +17,7 @@
 | Lint/Format | ESLint (flat) + Prettier |
 | Package manager | npm (`package-lock.json`) |
 | Build targets | `dist/` (web), `dist-singlefile/` (HTML 1 file), ZIP portable, Electron |
-| Mobile | PWA installable + Capacitor (IPA qua GitHub Actions macOS) |
+| Mobile | PWA installable (Safari → Thêm vào Màn hình chính); không làm IPA |
 
 ## 3. Kiến trúc (thư mục `src/`)
 
@@ -91,8 +91,8 @@ src/
 - **Single-file HTML**: `ChoAnhVe_SingleFile_Offline.html` (chạy offline 100%).
 - **ZIP portable**: kèm `.bat`/`.sh` launcher + `serve.mjs`.
 - **Electron**: wrapper desktop.
-- **iPhone/iOS**: PWA (Safari → "Thêm vào Màn hình chính") + Capacitor → IPA (workflow `.github/workflows/build-ios.yml` trên macOS, unsigned cho sideload).
-- **CI**: `.github/workflows/ci.yml` (lint + typecheck + test + build).
+- **iPhone/iOS**: **chỉ PWA** — Safari → "Thêm vào Màn hình chính" (icon PNG 180/192/512 + maskable, `public/manifest.json`, service worker precache). Không còn workflow build IPA; `capacitor.config.ts` và script `cap:*` ở lại repo chỉ để dùng local nếu cần.
+- **CI**: `.github/workflows/ci.yml` (lint + typecheck + test + build), `.github/workflows/deploy-pages.yml` (build + deploy GitHub Pages khi push `main`).
 
 ## 8. Tiến trình phát triển
 

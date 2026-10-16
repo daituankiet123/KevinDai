@@ -169,5 +169,14 @@ Theo yêu cầu "chạy được trên iPhone bằng file IPA". Chọn hướng 
 | `playwright.config.ts` / `e2e/app.spec.ts` | E2E test Playwright |
 | `public/icon-*.png` | icon PWA (sinh từ `npm run generate:icons`, cần sharp) |
 | `scripts/generate-icons.js` | sinh icon PNG cho PWA/iOS từ icon.svg |
-| `capacitor.config.ts` | cấu hình Capacitor (`webDir: dist`) |
-| `.github/workflows/build-ios.yml` | build IPA unsigned trên macOS |
+| `capacitor.config.ts` | cấu hình Capacitor (`webDir: dist`) — chỉ dùng local, không còn CI |
+| `.github/workflows/build-ios.yml` | ~~build IPA unsigned trên macOS~~ — đã gỡ (xem "Chốt hướng: chỉ PWA") |
+
+## Chốt hướng: iPhone chỉ dùng PWA (bỏ IPA) ✅
+
+Theo yêu cầu "PWA thôi, không cần IPA":
+
+- Gỡ `.github/workflows/build-ios.yml` — workflow này đỏ từ đầu (`npx cap add ios` báo Capacitor CLI cần Node ≥ 22 trong khi workflow pin Node 20) và không còn cần thiết.
+- `capacitor.config.ts`, dependency `@capacitor/*` và script `cap:*` vẫn ở lại repo để mở Xcode build local khi cần, nhưng không còn bước CI IPA nào. `src/utils/device.ts:isCapacitor()` giữ nguyên (chỉ là feature detection, không tốn dependency runtime).
+- Dọn `index.html`: bỏ link `/icons/apple-touch-icon-180.png` (404 trên Pages), bỏ `rel="manifest"` trùng (giữ `./manifest.json`, plugin PWA tự chèn `manifest.webmanifest`), gộp `apple-touch-icon` về một tag `sizes="180x180"`.
+- Tài liệu cập nhật: `AGENTS.md` (mục Mobile), `PROJECT_OVERVIEW.md` (Mobile + mục Đóng gói).
