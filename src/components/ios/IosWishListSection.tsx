@@ -76,7 +76,7 @@ export function IosWishListSection({
   };
 
   return (
-    <div className="space-y-4 pb-16 animate-pop-in">
+    <div className="space-y-4 pb-28 animate-pop-in">
       <div className="flex items-center justify-between">
         <p className="text-xs text-mute">
           {completed}/{wishes.length} đã hoàn thành
