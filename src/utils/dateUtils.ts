@@ -20,3 +20,17 @@ export function todayStr(d: Date = new Date()): string {
 export function todayMonthStr(d: Date = new Date()): string {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}`;
 }
+
+export function daysBetween(a: Date, b: Date): number {
+  const dayA = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime();
+  const dayB = new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime();
+  return Math.abs(Math.round((dayB - dayA) / (1000 * 60 * 60 * 24)));
+}
+
+export function isSameDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}

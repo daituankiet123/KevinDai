@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { Icon } from './Icon';
+import { EmptyState } from './EmptyState';
+import { IosFab } from './IosFab';
 import { useAppStore } from '../../store';
 import { playHeartPop } from '../../utils/audio';
 import type { DailyNote, DailyNoteMood } from '../../types';
@@ -80,19 +82,12 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-16 animate-pop-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[34px] font-semibold leading-tight">Nhật ký</h1>
           <p className="text-xs text-mute">{stats.total} ngày đã ghi · ❤️ {stats.totalHearts}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAdd(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-rose text-night active:scale-95 transition"
-        >
-          <Icon name="plus" size={24} />
-        </button>
       </div>
 
       {/* Search */}
@@ -113,7 +108,7 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
       {/* Notes List */}
       <div className="space-y-2">
         {filteredNotes.map((note) => (
-          <div key={note.id} className="rounded-2xl border border-line bg-card p-4">
+          <div key={note.id} className="rounded-2xl border border-line ios-card-gradient p-4">
             <div className="flex items-start gap-3">
               <span className="text-xl">{MOODS[note.mood]?.icon || '💕'}</span>
               <div className="flex-1 min-w-0">
@@ -132,7 +127,8 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
               <button
                 type="button"
                 onClick={() => onHeartNote(note.id)}
-                className="flex items-center gap-1 text-xs text-mute active:text-rose transition"
+                aria-label={`Thả tim nhật ký ngày ${formatDate(note.date)}`}
+                className="flex items-center gap-1 text-xs text-mute active:text-rose transition touch-target"
               >
                 <span>{note.hearts > 0 ? '❤️' : '🤍'}</span>
                 <span>{note.hearts}</span>
@@ -141,16 +137,18 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
                 <button
                   type="button"
                   onClick={() => onOpenModal(note)}
-                  className="text-xs text-mute underline active:text-ink"
+                  aria-label={`Sửa nhật ký ngày ${formatDate(note.date)}`}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-line text-mute transition active:scale-95 active:text-ink touch-target"
                 >
-                  Sửa
+                  <Icon name="pen" size={16} />
                 </button>
                 <button
                   type="button"
                   onClick={() => onDeleteNote(note.id)}
-                  className="text-xs text-mute underline active:text-red-400"
+                  aria-label={`Xóa nhật ký ngày ${formatDate(note.date)}`}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-line text-mute transition active:scale-95 active:text-rose touch-target"
                 >
-                  Xóa
+                  <Icon name="trash" size={16} />
                 </button>
               </div>
             </div>
@@ -158,21 +156,16 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
         ))}
 
         {filteredNotes.length === 0 && (
-          <div className="rounded-2xl border border-line bg-card p-8 text-center">
-            <div className="mb-2 text-4xl">📝</div>
-            <p className="text-sm text-mute">
-              {searchTerm ? 'Không tìm thấy nhật ký nào' : 'Chưa có nhật ký nào hôm nay'}
-            </p>
-            {!searchTerm && (
-              <button
-                type="button"
-                onClick={() => setShowAdd(true)}
-                className="mt-3 rounded-xl bg-rose px-4 py-2 text-xs font-semibold text-night"
-              >
-                Viết nhật ký đầu tiên
-              </button>
-            )}
-          </div>
+          <EmptyState
+            icon="📝"
+            title={searchTerm ? 'Không tìm thấy nhật ký nào' : 'Chưa có nhật ký nào'}
+            subtitle={
+              searchTerm ? 'Thử đổi từ khoá khác nhé.' : 'Ghi lại một dòng hôm nay để giữ nhịp yêu thương.'
+            }
+            action={
+              !searchTerm ? { label: 'Viết nhật ký đầu tiên', onClick: () => setShowAdd(true) } : undefined
+            }
+          />
         )}
       </div>
 
@@ -185,7 +178,8 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
               <button
                 type="button"
                 onClick={() => setShowAdd(false)}
-                className="text-mute hover:text-ink transition"
+                aria-label="Đóng"
+                className="text-mute hover:text-ink transition touch-target"
               >
                 <Icon name="x" size={24} />
               </button>
@@ -256,6 +250,8 @@ export function IosDailyNotesSection({ onAddOrUpdateNote, onDeleteNote, onHeartN
           </div>
         </div>
       )}
+
+      <IosFab label="Viết nhật ký" onClick={() => setShowAdd(true)} />
     </div>
   );
 }

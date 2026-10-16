@@ -9,6 +9,8 @@ type Props = {
   onHeartsChange: (on: boolean) => void;
   onBackup: () => void;
   onCoupleSettings: () => void;
+  onStats: () => void;
+  onShare: () => void;
 };
 
 /** Tab "Thêm": cài đặt và sao lưu */
@@ -21,6 +23,11 @@ export function MoreTab(p: Props) {
         <SwitchRow icon="music" title="Nhạc nền lofi" checked={p.music} onChange={p.onMusicChange} />
         <SwitchRow icon="sound" title="Hiệu ứng âm thanh" checked={p.sfx} onChange={p.onSfxChange} />
         <SwitchRow icon="heart" title="Mưa trái tim" checked={p.hearts} onChange={p.onHeartsChange} />
+      </ListGroup>
+
+      <ListGroup>
+        <ListRow icon="star" title="Thống kê & Insights" subtitle="Streak, cảm xúc, tổng kết" onClick={p.onStats} />
+        <ListRow icon="mail" title="Chia sẻ dữ liệu" subtitle="Mã link + QR cho máy kia" onClick={p.onShare} />
       </ListGroup>
 
       <ListGroup>

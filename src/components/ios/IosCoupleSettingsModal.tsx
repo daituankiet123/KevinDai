@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Icon } from './Icon';
+import { IosToggle } from './IosToggle';
 import { playHeartPop } from '../../utils/audio';
 import { compressImage } from '../../utils/imageCompression';
 import { requestNotificationPermission } from '../../utils/notifications';
@@ -13,12 +14,21 @@ type Props = {
   onSave: (data: CoupleData) => void;
   soundEnabled: boolean;
   photos: CouplePhoto[];
+  onOpenShare: () => void;
 };
 
 const AVATAR_OPTIONS_BOY = ['👨‍✈️', '👮‍♂️', '💂‍♂️', '🧑‍✈️', '🧑', '😎', '🧸'];
 const AVATAR_OPTIONS_GIRL = ['👧🌸', '👩‍🦰', '👸', '🌸', '🎀', '🐰', '🐱'];
 
-export function IosCoupleSettingsModal({ isOpen, onClose, couple, onSave, soundEnabled, photos }: Props) {
+export function IosCoupleSettingsModal({
+  isOpen,
+  onClose,
+  couple,
+  onSave,
+  soundEnabled,
+  photos,
+  onOpenShare,
+}: Props) {
   const [formData, setFormData] = useState<CoupleData>({ ...couple });
   const [showAvatarPickerBoy, setShowAvatarPickerBoy] = useState(false);
   const [showAvatarPickerGirl, setShowAvatarPickerGirl] = useState(false);
@@ -98,6 +108,7 @@ export function IosCoupleSettingsModal({ isOpen, onClose, couple, onSave, soundE
                   type="button"
                   key={av}
                   onClick={() => setFormData({ ...formData, boyfriendAvatar: av })}
+                  aria-label={`Ảnh đại diện chàng lính ${av}`}
                   className={`flex-none rounded-xl border p-2 text-xl transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
                     formData.boyfriendAvatar === av ? 'border-rose bg-rose/20' : 'border-line'
                   }`}
@@ -151,6 +162,7 @@ export function IosCoupleSettingsModal({ isOpen, onClose, couple, onSave, soundE
                   type="button"
                   key={av}
                   onClick={() => setFormData({ ...formData, girlfriendAvatar: av })}
+                  aria-label={`Ảnh đại diện hậu phương ${av}`}
                   className={`flex-none rounded-xl border p-2 text-xl transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
                     formData.girlfriendAvatar === av ? 'border-rose bg-rose/20' : 'border-line'
                   }`}
@@ -293,6 +305,21 @@ export function IosCoupleSettingsModal({ isOpen, onClose, couple, onSave, soundE
             />
           </div>
 
+          <div className="space-y-2 rounded-2xl border border-line p-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-mute">Chia sẻ dữ liệu</h3>
+            <p className="text-[11px] leading-relaxed text-mute">
+              Tạo mã link hoặc QR để chuyển dữ liệu sang máy của anh, không cần cloud.
+            </p>
+            <button
+              type="button"
+              onClick={onOpenShare}
+              className="flex w-full items-center justify-between rounded-xl border border-line bg-night px-4 py-3 text-sm font-semibold text-rose transition active:bg-line touch-target"
+            >
+              Mở mục Chia sẻ
+              <Icon name="chevron" size={18} />
+            </button>
+          </div>
+
           <div className="flex gap-3 pt-2">
             <button
               type="button"
@@ -337,23 +364,9 @@ export function IosCoupleSettingsModal({ isOpen, onClose, couple, onSave, soundE
 
 function ToggleRow({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <button
-      type="button"
-      onClick={() => onChange(!checked)}
-      className="flex items-center justify-between py-2 touch-target"
-    >
+    <div className="flex items-center justify-between py-2">
       <span className="text-sm text-ink">{label}</span>
-      <span
-        className={`relative h-[31px] w-[51px] flex-none rounded-full transition-colors ${
-          checked ? 'bg-rose' : 'bg-line'
-        }`}
-      >
-        <span
-          className={`absolute top-0.5 size-[27px] rounded-full bg-ink transition-[left] ${
-            checked ? 'left-[22px]' : 'left-0.5'
-          }`}
-        />
-      </span>
-    </button>
+      <IosToggle checked={checked} onChange={onChange} ariaLabel={label} />
+    </div>
   );
 }

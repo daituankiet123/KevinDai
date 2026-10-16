@@ -15,6 +15,9 @@ import { IosLoveLettersSection } from './IosLoveLettersSection';
 import { IosWishListSection } from './IosWishListSection';
 import { IosDailyNoteModal } from './IosDailyNoteModal';
 import { IosCoupleSettingsModal } from './IosCoupleSettingsModal';
+import { IosStatsScreen } from './IosStatsScreen';
+import { IosShareScreen } from './IosShareScreen';
+import { SectionHeader } from './SectionHeader';
 import { LoveFireworksModal, type MilestoneCelebrationData } from '../LoveFireworksModal';
 import { useAppStore } from '../../store';
 import { startRomanticMusic, stopRomanticMusic } from '../../utils/audio';
@@ -24,7 +27,15 @@ import { calculateMilitaryCountdown } from '../../utils/dateCalculations';
 import { setCountdownBadge } from '../../utils/notifications';
 import type { CoupleData, DailyNote } from '../../types';
 
-export type Section = 'notes' | 'anniversaries' | 'album' | 'milestones' | 'letters' | 'wishes';
+export type Section =
+  | 'notes'
+  | 'anniversaries'
+  | 'album'
+  | 'milestones'
+  | 'letters'
+  | 'wishes'
+  | 'stats'
+  | 'share';
 
 export function IosApp() {
   const { couple, anniversaries, letters, wishes, photos, dailyNotes, storageError, lastDeleted } =
@@ -277,6 +288,20 @@ export function IosApp() {
               />
             </div>
           );
+        case 'stats':
+          return (
+            <div className="space-y-4">
+              <SectionHeader title="Thống kê" subtitle="Streak & nhịp điệu tình yêu" onBack={goBack} />
+              <IosStatsScreen />
+            </div>
+          );
+        case 'share':
+          return (
+            <div className="space-y-4">
+              <SectionHeader title="Chia sẻ" subtitle="Mã link & QR giữa hai máy" onBack={goBack} />
+              <IosShareScreen />
+            </div>
+          );
       }
     }
 
@@ -332,6 +357,8 @@ export function IosApp() {
             onHeartsChange={(on) => handleUpdateCouple({ ...couple, rainHeartsEnabled: on })}
             onBackup={handleExportData}
             onCoupleSettings={() => setIsSettingsModalOpen(true)}
+            onStats={() => setSection('stats')}
+            onShare={() => setSection('share')}
           />
         );
       default:
@@ -367,6 +394,11 @@ export function IosApp() {
         onSave={handleUpdateCouple}
         soundEnabled={couple.soundEnabled}
         photos={photos}
+        onOpenShare={() => {
+          setIsSettingsModalOpen(false);
+          setTab('more');
+          setSection('share');
+        }}
       />
 
       <LoveFireworksModal
@@ -398,26 +430,5 @@ export function IosApp() {
 
       <input type="file" accept="application/json" className="hidden" id="ios-import-backup" onChange={handleImportData} />
     </>
-  );
-}
-
-function SectionHeader({ title, subtitle, onBack }: { title: string; subtitle: string; onBack: () => void }) {
-  return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-3 pt-2">
-        <button
-          type="button"
-          onClick={onBack}
-          aria-label="Quay lại"
-          className="flex size-9 items-center justify-center rounded-full bg-card text-ink active:bg-line"
-        >
-          ←
-        </button>
-        <div>
-          <h1 className="text-2xl font-semibold">{title}</h1>
-          <p className="text-sm text-mute">{subtitle}</p>
-        </div>
-      </div>
-    </div>
   );
 }

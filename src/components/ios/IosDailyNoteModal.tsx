@@ -105,12 +105,12 @@ export function IosDailyNoteModal({
                   key={m.id}
                   type="button"
                   onClick={() => setMood(m.id)}
-                  className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 transition ${
+                  className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 transition touch-target ${
                     mood === m.id ? 'border-rose bg-rose/20' : 'border-line'
                   }`}
                 >
                   <span className="text-lg">{m.icon}</span>
-                  <span className="text-[9px] font-medium text-mute">{m.label}</span>
+                  <span className="text-[11px] font-medium text-mute">{m.label}</span>
                 </button>
               ))}
             </div>
