@@ -105,7 +105,7 @@ export function IosPhotoAlbumSection({
   const selectedPhoto = safeIndex !== null && safeIndex >= 0 ? filteredPhotos[safeIndex] : null;
 
   return (
-    <div className="space-y-4 pb-16 animate-pop-in">
+    <div className="space-y-4 pb-28 animate-pop-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[34px] font-semibold leading-tight">Album ảnh</h1>

@@ -126,7 +126,7 @@ export function IosLoveLettersSection({
   const readingLetter = reading ? letters.find((l) => l.id === reading.letter.id) ?? null : null;
 
   return (
-    <div className="space-y-4 pb-16 animate-pop-in">
+    <div className="space-y-4 pb-28 animate-pop-in">
       <div className="flex items-center justify-between">
         <p className="text-xs text-mute">
           {summary.total} lá thư · Đã gửi {summary.sent} · Nháp {summary.drafts}
