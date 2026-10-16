@@ -1,19 +1,19 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { shareText, sharePhoto, copyToClipboard } from './photoShare';
 import type { CouplePhoto } from '../types';
 
 const shareMock = vi.fn();
+const writeTextMock = vi.fn().mockResolvedValue(undefined);
 
 beforeEach(() => {
   shareMock.mockReset();
-  Object.defineProperty(navigator, 'share', {
-    configurable: true,
-    value: shareMock,
-  });
-  Object.defineProperty(navigator, 'clipboard', {
-    configurable: true,
-    value: { writeText: vi.fn().mockResolvedValue(undefined) },
-  });
+  writeTextMock.mockClear();
+  // Node 20 (CI) has no global navigator, so stub it instead of patching one.
+  vi.stubGlobal('navigator', { share: shareMock, clipboard: { writeText: writeTextMock } });
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
 });
 
 describe('photoShare', () => {
